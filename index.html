@@ -1277,28 +1277,42 @@ function buildApiUrl(action, params={}){
   return url.toString();
 }
 
-async function apiGet(action, params={}){
-  const url = buildApiUrl(action, params);
-
-  const response = await fetch(url, {
-    method:'GET',
-    mode:'cors',
-    cache:'no-store'
+// GET memakai JSONP untuk menghindari blokir CORS pada Apps Script.
+function apiGet(action, params={}){
+  return new Promise(function(resolve, reject){
+    const callbackName = '__teamAreaJsonp_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const url = new URL(buildApiUrl(action, params));
+    let settled = false;
+    const cleanup = function(){
+      if(script.parentNode) script.parentNode.removeChild(script);
+      try{ delete window[callbackName]; }catch(e){ window[callbackName] = undefined; }
+      if(timer) clearTimeout(timer);
+    };
+    const finish = function(fn, value){
+      if(settled) return;
+      settled = true;
+      cleanup();
+      fn(value);
+    };
+    const timer = setTimeout(function(){
+      finish(reject, new Error('Backend tidak merespons. Periksa deployment Apps Script.'));
+    }, 20000);
+    window[callbackName] = function(result){
+      if(result && result.success === false){
+        finish(reject, new Error(result.message || 'Request gagal.'));
+        return;
+      }
+      finish(resolve, result);
+    };
+    script.onerror = function(){
+      finish(reject, new Error('Gagal memuat data backend. Periksa URL dan deployment Apps Script.'));
+    };
+    url.searchParams.set('callback', callbackName);
+    url.searchParams.set('_', String(Date.now()));
+    script.src = url.toString();
+    document.head.appendChild(script);
   });
-
-  const text = await response.text();
-  let result;
-  try{
-    result = JSON.parse(text);
-  }catch(error){
-    throw new Error('Response backend tidak valid.');
-  }
-
-  if(!response.ok || (result && result.success === false)){
-    throw new Error((result && result.message) || 'Request gagal.');
-  }
-
-  return result;
 }
 
 async function apiPost(payload){
