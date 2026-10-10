@@ -962,6 +962,8 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
           <div class="field"><label>TARGET SELESAI</label><input id="wtAmDueDate" type="date"></div>
           <div class="field full-row"><label>KETERANGAN TAMBAHAN</label><textarea id="wtAmNote" rows="2" placeholder="Keterangan tambahan (opsional)"></textarea></div>
           <div class="field full-row"><label>CATATAN DRAFT</label><select id="wtAmDraftSelect" onchange="wtAmLoadSelectedDraft()"><option value="">Draft baru</option></select></div>
+          <div class="field full-row"><button type="button" class="btn btn-light" onclick="wtAmAddFinding()">＋ Tambah Temuan Lain</button><div class="small">Gunakan tombol ini jika dalam satu kunjungan WT terdapat lebih dari satu temuan.</div></div>
+          <div class="field full-row" id="wtAmExtraFindings"></div>
           <div class="field full-row actions" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-light" onclick="wtAmSaveDraft()">💾 Simpan Draft</button><button class="btn btn-primary" onclick="wtAmStartWT()">▶ Mulai / Simpan WT</button><button class="btn btn-success" onclick="wtAmExport('pdf')">📄 Export PDF</button><button class="btn btn-light" onclick="wtAmExport('word')">📝 Export Word</button><button class="btn btn-light" onclick="wtAmClearForm()">Bersihkan Form</button></div>
         </div>
         <div id="wtAmMessage" class="small" style="margin-top:10px"></div>
@@ -1944,7 +1946,7 @@ async function saveWaste(){
 
   try{
     showLoading(true);
-    const file=$('wastePhoto').files[0];
+    const file=getPhotoFile('wastePhoto');
     const payload={
       action:'saveWaste',
       tanggal:$('wasteDate').value,
@@ -1997,7 +1999,7 @@ async function saveMaintenance(){
 
   try{
     showLoading(true);
-    const file=$('mtBefore').files[0];
+    const file=getPhotoFile('mtBefore');
 
     const payload={
       action:'saveMaintenance',
@@ -2101,7 +2103,7 @@ async function saveKPI(){
     return;
   }
 
-  const file=$('kpiPhoto').files[0];
+  const file=getPhotoFile('kpiPhoto');
   if(!file){
     toast('Foto KPI wajib dipilih.');
     return;
@@ -2138,14 +2140,69 @@ function num(id){
 }
 
 function previewFile(input,targetId){
-  const file=input.files[0];
+  const file=input?.files?.[0];
   const target=$(targetId);
+  if(!target)return;
   target.innerHTML='';
   if(!file) return;
-  const img=document.createElement('img');
-  img.src=URL.createObjectURL(file);
-  target.appendChild(img);
+  const link=document.createElement('button');
+  link.type='button';
+  link.className='btn btn-light photo-file-link';
+  link.textContent='📎 '+file.name+' · Klik untuk melihat foto';
+  link.title=file.name;
+  link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);
+  target.appendChild(link);
 }
+
+// Terapkan pilihan Galeri + Kamera pada semua field foto lama tanpa mengganti ID input
+// sehingga proses upload yang sudah ada tetap menggunakan file input yang sama.
+function setupUniversalPhotoInput(inputId,previewId){
+  const input=$(inputId);
+  if(!input || input.dataset.universalPhotoReady==='1')return;
+  input.dataset.universalPhotoReady='1';
+  const filebox=input.closest('.filebox')||input.parentElement;
+  input.style.display='none';
+  const controls=document.createElement('div');
+  controls.className='actions universal-photo-actions';
+  controls.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin:6px 0';
+  controls.innerHTML='<button type="button" class="btn btn-light" data-gallery>🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" data-camera>📷 Ambil Foto dengan Kamera</button>';
+  input.parentNode.insertBefore(controls,input);
+  controls.querySelector('[data-gallery]').addEventListener('click',()=>input.click());
+  const camera=document.createElement('input');
+  camera.type='file';camera.accept='image/*';camera.setAttribute('capture','environment');
+  camera.style.display='none';camera.setAttribute('aria-label','Ambil foto dengan kamera');
+  input.parentNode.insertBefore(camera,input.nextSibling);
+  controls.querySelector('[data-camera]').addEventListener('click',()=>camera.click());
+  camera.addEventListener('change',()=>{
+    const file=camera.files&&camera.files[0];if(!file)return;
+    try{const transfer=new DataTransfer();transfer.items.add(file);input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));}
+    catch(err){previewFile({files:[file]},previewId);input._selectedCameraFile=file;}
+  });
+  input.addEventListener('change',()=>{input._selectedCameraFile=null;previewFile(input,previewId);});
+}
+function setupAllLegacyPhotoInputs(root){
+  const scope=root&&root.querySelectorAll?root:document;
+  const candidates=[];
+  if(scope.matches&&scope.matches('input[type="file"][accept*="image"]'))candidates.push(scope);
+  candidates.push(...scope.querySelectorAll('input[type="file"][accept*="image"]'));
+  candidates.forEach(input=>{
+    if(input.dataset.universalPhotoReady==='1')return;
+    // Keep specialized WT AM / multi-finding photo controls as they already have camera + gallery buttons.
+    if(input.hasAttribute('data-gallery')||input.hasAttribute('data-camera')||/wtAmSetPhoto|wtAmExtraPhoto/.test(input.getAttribute('onchange')||''))return;
+    const match=(input.getAttribute('onchange')||'').match(/previewFile\(this,\s*['"]([^'"]+)['"]\)/);
+    if(match){setupUniversalPhotoInput(input.id,match[1]);return;}
+    // Legacy photo input without a preview target still gets a camera button; retain its original ID for upload.
+    if(input.id && input.accept && input.accept.includes('image')){
+      const holder=document.createElement('div');holder.className='universal-photo-actions';holder.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin:6px 0';
+      const gallery=document.createElement('button');gallery.type='button';gallery.className='btn btn-light';gallery.textContent='🖼️ Pilih dari Galeri';gallery.onclick=()=>input.click();
+      const cameraBtn=document.createElement('button');cameraBtn.type='button';cameraBtn.className='btn btn-primary';cameraBtn.textContent='📷 Ambil Foto dengan Kamera';
+      const camera=document.createElement('input');camera.type='file';camera.accept='image/*';camera.capture='environment';camera.style.display='none';
+      camera.addEventListener('change',()=>{const file=camera.files?.[0];if(!file)return;try{const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){input._selectedCameraFile=file;}});
+      cameraBtn.onclick=()=>camera.click();input.style.display='none';input.parentNode.insertBefore(holder,input);holder.append(gallery,cameraBtn);input.parentNode.insertBefore(camera,input.nextSibling);input.dataset.universalPhotoReady='1';
+    }
+  });
+}
+function getPhotoFile(inputId){const input=$(inputId);return input? (input._selectedCameraFile||input.files?.[0]||null):null;}
 
 function fileToDataURL(file){
   return new Promise((resolve,reject)=>{
@@ -2395,11 +2452,9 @@ function renderWalkthroughDetail(r){
 
 function photoCard(label,url){
   if(!url) return '';
-  return `
-    <div class="photo-box">
-      <img src="${escapeAttr(url)}" alt="${escapeAttr(label)}">
-      <a class="photo-link" href="${escapeAttr(url)}" target="_blank">${escapeHtml(label)} · Buka</a>
-    </div>`;
+  const safeUrl=escapeAttr(url);
+  const safeLabel=escapeHtml(label||'Foto');
+  return `<div class="photo-box photo-file-card"><button type="button" class="btn btn-light photo-file-link" onclick="wtAmOpenPhoto('${safeUrl}','${safeLabel}',false)">📎 ${safeLabel} · Klik untuk melihat foto</button></div>`;
 }
 
 async function saveWalkthroughFinding(){
@@ -2421,7 +2476,7 @@ async function saveWalkthroughFinding(){
 
   try{
     showLoading(true);
-    const file = $('wtBefore').files[0];
+    const file = getPhotoFile('wtBefore');
 
     const payload = {
       action:'saveWalkthrough',
@@ -2464,8 +2519,8 @@ async function updateWalkthroughFinding(id){
   try{
     showLoading(true);
 
-    const progressFile = $('wtUpdProgressPhoto')?.files[0];
-    const afterFile = $('wtUpdAfterPhoto')?.files[0];
+    const progressFile = getPhotoFile('wtUpdProgressPhoto');
+    const afterFile = getPhotoFile('wtUpdAfterPhoto');
 
     const payload = {
       action:'updateWalkthrough',
@@ -2857,7 +2912,7 @@ async function saveSmallwareRequestUI(){
   const name = $('swName').value.trim();
   const qty = Number($('swQty').value||0);
   const type = $('swType').value;
-  const file = $('swPhoto').files[0];
+  const file = getPhotoFile('swPhoto');
 
   if(!name){
     toast('Nama Smallware wajib diisi.');
@@ -3054,6 +3109,12 @@ function compressSmallwareImage(file){
 
 /* PUBLIC STORE PORTAL - NO LOGIN */
 document.addEventListener('DOMContentLoaded', function(){
+  setupUniversalPhotoInput('mtBefore','mtBeforePreview');
+  setupUniversalPhotoInput('kpiPhoto','kpiPreview');
+  setupUniversalPhotoInput('swPhoto','swPhotoPreview');
+  setupAllLegacyPhotoInputs(document);
+  const photoObserver=new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)setupAllLegacyPhotoInputs(node);})));
+  photoObserver.observe(document.body,{childList:true,subtree:true});
   initPublicPortal();
 });
 
@@ -3375,7 +3436,9 @@ let WT_AM_CURRENT_DRAFT = '';
 let WT_AM_CURRENT_REPORT = null;
 function wtAmVal(id){return document.getElementById(id)?.value||'';}
 function wtAmSetMsg(id,msg){const el=document.getElementById(id);if(el)el.textContent=msg;}
-function wtAmSetPhoto(input,otherId,previewId){const other=document.getElementById(otherId);if(other)other.value='';previewFile(input,previewId);}
+function wtAmSetPhoto(input,otherId,previewId){const other=document.getElementById(otherId);if(other)other.value='';wtAmRenderPhotoFile(input.files?.[0],previewId);}
+function wtAmRenderPhotoFile(file,previewId){const target=document.getElementById(previewId);if(!target)return;target.innerHTML='';if(!file)return;const link=document.createElement('button');link.type='button';link.className='btn btn-light';link.textContent='📎 '+file.name+' · Klik untuk melihat foto';link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);target.appendChild(link);}
+function wtAmOpenPhoto(src,title,revoke=false){let modal=document.getElementById('wtAmPhotoModal');if(!modal){modal=document.createElement('div');modal.id='wtAmPhotoModal';modal.style.cssText='position:fixed;inset:0;background:rgba(10,20,35,.82);z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px';modal.innerHTML='<div style="background:#fff;border-radius:14px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px"><b id="wtAmPhotoModalTitle" style="overflow-wrap:anywhere"></b><button type="button" class="btn btn-light" id="wtAmPhotoModalClose">Tutup ✕</button></div><img id="wtAmPhotoModalImg" alt="Detail foto" style="display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:auto"></div>';document.body.appendChild(modal);modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});modal.querySelector('#wtAmPhotoModalClose').onclick=()=>modal.style.display='none';}modal.querySelector('#wtAmPhotoModalTitle').textContent=title||'Detail Foto';modal.querySelector('#wtAmPhotoModalImg').src=src;modal.style.display='flex';}
 function wtAmSelectedPhoto(prefix){return document.getElementById(prefix+'Camera')?.files?.[0]||document.getElementById(prefix+'Gallery')?.files?.[0]||null;}
 async function wtAmFormData(){const d={draftId:WT_AM_CURRENT_DRAFT,store:wtAmVal('wtAmStore'),tanggal:wtAmVal('wtAmDate'),kategori:wtAmVal('wtAmCategory'),prioritas:wtAmVal('wtAmPriority'),temuan:wtAmVal('wtAmFinding').trim(),actionPlan:wtAmVal('wtAmActionPlan').trim(),pic:wtAmVal('wtAmPIC').trim(),dueDate:wtAmVal('wtAmDueDate'),keterangan:wtAmVal('wtAmNote').trim(),fotoBefore:'',mimeTypeBefore:'image/jpeg'};const f=wtAmSelectedPhoto('wtAmPhoto');if(f){d.fotoBefore=await fileToDataURL(f);d.mimeTypeBefore=f.type||'image/jpeg';}return d;}
 async function wtAmLogin(){try{wtAmSetMsg('wtAmLoginMessage','Memverifikasi login...');const r=await apiPost({action:'wtAmLogin',username:wtAmVal('wtAmUsername').trim(),password:wtAmVal('wtAmPassword')});WT_AM_TOKEN=r.token||'';if(!WT_AM_TOKEN)throw new Error('Token login tidak diterima backend.');document.getElementById('wtAmWorkspace').classList.remove('hidden');document.getElementById('wtAmLoginCard').classList.add('hidden');document.getElementById('wtAmDate').value=todayISO();wtAmSetMsg('wtAmLoginMessage','Login berhasil.');await wtAmLoadDrafts();}catch(e){wtAmSetMsg('wtAmLoginMessage','Login gagal: '+e.message);}}
@@ -3385,8 +3448,11 @@ function wtAmLoadSelectedDraft(){const id=wtAmVal('wtAmDraftSelect');if(id)wtAmC
 function wtAmChooseDraft(id){const d=WT_AM_DRAFTS.find(x=>String(x.id)===String(id));if(!d)return;WT_AM_CURRENT_DRAFT=d.id;document.getElementById('wtAmDraftSelect').value=d.id;document.getElementById('wtAmStore').value=d.store||'';document.getElementById('wtAmDate').value=wtAmDateISO(d.tanggal);document.getElementById('wtAmCategory').value=d.kategori||'OPERASIONAL';document.getElementById('wtAmPriority').value=d.prioritas||'MEDIUM';document.getElementById('wtAmFinding').value=d.temuan||'';document.getElementById('wtAmActionPlan').value=d.actionPlan||'';document.getElementById('wtAmPIC').value=d.pic||'';document.getElementById('wtAmDueDate').value=wtAmDateISO(d.dueDate);document.getElementById('wtAmNote').value=d.keterangan||'';wtAmSetMsg('wtAmMessage','Draft dimuat. Kamu bisa melanjutkan dari sini.');}
 function wtAmDateISO(v){if(!v)return '';const s=String(v);if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const d=new Date(v);return isNaN(d)?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 async function wtAmSaveDraft(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}const d=await wtAmFormData();if(!d.store){wtAmSetMsg('wtAmMessage','Pilih store sebelum menyimpan draft.');return;}try{const r=await apiPost({action:'wtAmSaveDraft',token:WT_AM_TOKEN,draft:d});WT_AM_CURRENT_DRAFT=r.id||d.draftId;wtAmSetMsg('wtAmMessage','Draft tersimpan di spreadsheet. Bisa dilanjutkan dari perangkat lain.');await wtAmLoadDrafts();if(WT_AM_CURRENT_DRAFT)document.getElementById('wtAmDraftSelect').value=WT_AM_CURRENT_DRAFT;}catch(e){wtAmSetMsg('wtAmMessage','Gagal menyimpan draft: '+e.message);}}
-async function wtAmStartWT(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}const d=await wtAmFormData();if(!d.store||!d.temuan){wtAmSetMsg('wtAmMessage','Store dan keterangan temuan wajib diisi.');return;}try{const r=await apiPost({action:'wtAmFinalize',token:WT_AM_TOKEN,draft:d});WT_AM_CURRENT_REPORT={...d,id:r.id,status:r.status||'OPEN',inputBy:'ADMIN NUNUNG'};WT_AM_CURRENT_DRAFT='';wtAmSetMsg('wtAmMessage','WT AM tersimpan. Nomor temuan: '+r.id+'. Temuan masuk ke History Walkthrough.');wtAmClearForm();await wtAmLoadDrafts();await loadWalkthrough();await wtAmLoadFollowups();}catch(e){wtAmSetMsg('wtAmMessage','Gagal menyimpan WT: '+e.message);}}
-function wtAmClearForm(){WT_AM_CURRENT_DRAFT='';['wtAmStore','wtAmDate','wtAmFinding','wtAmActionPlan','wtAmPIC','wtAmDueDate','wtAmNote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('wtAmCategory').value='OPERASIONAL';document.getElementById('wtAmPriority').value='MEDIUM';['wtAmPhotoGallery','wtAmPhotoCamera'].forEach(id=>{const pf=document.getElementById(id);if(pf)pf.value='';});const pp=document.getElementById('wtAmPhotoPreview');if(pp)pp.innerHTML='';if(document.getElementById('wtAmDraftSelect'))document.getElementById('wtAmDraftSelect').value='';}
+function wtAmAddFinding(){const host=document.getElementById('wtAmExtraFindings');const n=host.querySelectorAll('[data-extra-finding]').length+2;const card=document.createElement('div');card.className='walk-card';card.setAttribute('data-extra-finding','1');card.style.marginTop='12px';card.innerHTML=`<div class="walk-card-head"><b>Temuan ${n}</b><button type="button" class="btn btn-light" onclick="this.closest('[data-extra-finding]').remove();wtAmRenumberFindings()">Hapus</button></div><div class="grid"><div class="field"><label>KATEGORI</label><select data-kategori><option>OPERASIONAL</option><option>FOOD SAFETY</option><option>SERVICE</option><option>PRODUCT QUALITY</option><option>CLEANLINESS</option><option>MAINTENANCE</option><option>PEOPLE</option><option>LAINNYA</option></select></div><div class="field"><label>PRIORITAS</label><select data-prioritas><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></div><div class="field full-row"><label>KETERANGAN TEMUAN DETAIL</label><textarea data-temuan rows="4" placeholder="Jelaskan temuan secara detail..."></textarea></div><div class="field full-row"><label>FOTO TEMUAN (opsional)</label><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-light" onclick="this.closest('[data-extra-finding]').querySelector('[data-gallery]').click()">🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" onclick="this.closest('[data-extra-finding]').querySelector('[data-camera]').click()">📷 Ambil Foto dengan Kamera</button></div><input data-gallery type="file" accept="image/*" style="display:none" onchange="wtAmExtraPhoto(this)"><input data-camera type="file" accept="image/*" capture="environment" style="display:none" onchange="wtAmExtraPhoto(this)"><div data-photo-preview class="photo-preview"></div></div><div class="field full-row"><label>ACTION PLAN / TINDAKAN PERBAIKAN</label><textarea data-actionplan rows="3" placeholder="Rencana perbaikan"></textarea></div><div class="field"><label>PIC</label><input data-pic placeholder="Nama PIC"></div><div class="field"><label>TARGET SELESAI</label><input data-duedate type="date"></div><div class="field full-row"><label>KETERANGAN TAMBAHAN</label><textarea data-note rows="2"></textarea></div></div>`;host.appendChild(card);wtAmRenumberFindings();}
+function wtAmExtraPhoto(input){const card=input.closest('[data-extra-finding]');const other=card.querySelector(input.hasAttribute('data-camera')?'[data-gallery]':'[data-camera]');if(other)other.value='';const target=card.querySelector('[data-photo-preview]');target.innerHTML='';const file=input.files?.[0];if(file){const link=document.createElement('button');link.type='button';link.className='btn btn-light';link.textContent='📎 '+file.name+' · Klik untuk melihat foto';link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);target.appendChild(link);}}
+function wtAmRenumberFindings(){document.querySelectorAll('#wtAmExtraFindings [data-extra-finding]').forEach((card,i)=>{const b=card.querySelector('.walk-card-head b');if(b)b.textContent='Temuan '+(i+2);});}
+async function wtAmStartWT(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}const base=await wtAmFormData();const extras=[...document.querySelectorAll('#wtAmExtraFindings [data-extra-finding]')];const items=[base,...await Promise.all(extras.map(async card=>{const file=card.querySelector('[data-camera]').files[0]||card.querySelector('[data-gallery]').files[0];return {draftId:'',store:base.store,tanggal:base.tanggal,kategori:card.querySelector('[data-kategori]').value,prioritas:card.querySelector('[data-prioritas]').value,temuan:card.querySelector('[data-temuan]').value.trim(),actionPlan:card.querySelector('[data-actionplan]').value.trim(),pic:card.querySelector('[data-pic]').value.trim(),dueDate:card.querySelector('[data-duedate]').value,keterangan:card.querySelector('[data-note]').value.trim(),fotoBefore:file?await fileToDataURL(file):'',mimeTypeBefore:file?.type||'image/jpeg'};}))];if(!base.store||items.some(x=>!x.temuan)){wtAmSetMsg('wtAmMessage','Pilih store dan isi keterangan untuk semua temuan sebelum menyimpan.');return;}try{const saved=[];for(const item of items){const r=await apiPost({action:'wtAmFinalize',token:WT_AM_TOKEN,draft:item});saved.push(r.id||'');}WT_AM_CURRENT_REPORT={...base,id:saved[0],status:'OPEN',inputBy:'ADMIN NUNUNG'};WT_AM_CURRENT_DRAFT='';wtAmSetMsg('wtAmMessage',items.length+' temuan WT AM berhasil disimpan. Nomor temuan: '+saved.filter(Boolean).join(', ')+'. Semua temuan masuk ke History Walkthrough.');wtAmClearForm();await wtAmLoadDrafts();await loadWalkthrough();await wtAmLoadFollowups();}catch(e){wtAmSetMsg('wtAmMessage','Penyimpanan WT terhenti: '+e.message+'. Periksa History Walkthrough untuk memastikan temuan yang sudah tersimpan.');}}
+function wtAmClearForm(){WT_AM_CURRENT_DRAFT='';['wtAmStore','wtAmDate','wtAmFinding','wtAmActionPlan','wtAmPIC','wtAmDueDate','wtAmNote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('wtAmCategory').value='OPERASIONAL';document.getElementById('wtAmPriority').value='MEDIUM';['wtAmPhotoGallery','wtAmPhotoCamera'].forEach(id=>{const pf=document.getElementById(id);if(pf)pf.value='';});const pp=document.getElementById('wtAmPhotoPreview');if(pp)pp.innerHTML='';const extra=document.getElementById('wtAmExtraFindings');if(extra)extra.innerHTML='';if(document.getElementById('wtAmDraftSelect'))document.getElementById('wtAmDraftSelect').value='';}
 async function wtAmExport(type){const d=WT_AM_CURRENT_REPORT||await wtAmFormData();if(!d.store||!d.temuan){wtAmSetMsg('wtAmMessage','Isi temuan dan store, lalu simpan WT atau draft sebelum export.');return;}const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const html=`<html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;color:#243247}h1{color:#173f6d}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccd5e0;padding:8px;text-align:left;vertical-align:top}th{background:#edf3fa;width:28%}</style></head><body><h1>TEAM AREA NUNUNG</h1><h2>LAPORAN WALKTHROUGH AREA MANAGER</h2><table><tr><th>ID TEMUAN</th><td>${esc(d.id||'DRAFT')}</td></tr><tr><th>STORE</th><td>${esc(d.store)}</td></tr><tr><th>TANGGAL</th><td>${esc(d.tanggal)}</td></tr><tr><th>KATEGORI</th><td>${esc(d.kategori||d.kategori)}</td></tr><tr><th>PRIORITAS</th><td>${esc(d.prioritas)}</td></tr><tr><th>KETERANGAN TEMUAN</th><td>${esc(d.temuan)}</td></tr><tr><th>ACTION PLAN</th><td>${esc(d.actionPlan)}</td></tr><tr><th>PIC</th><td>${esc(d.pic)}</td></tr><tr><th>TARGET SELESAI</th><td>${esc(d.dueDate)}</td></tr><tr><th>KETERANGAN TAMBAHAN</th><td>${esc(d.keterangan)}</td></tr></table><p>Dokumen dibuat melalui TEAM AREA NUNUNG.</p></body></html>`;if(type==='pdf'){const w=window.open('','_blank');if(!w){wtAmSetMsg('wtAmMessage','Izinkan pop-up browser untuk export PDF.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),400);}else{const blob=new Blob(['\ufeff',html],{type:'application/msword'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`WT_AM_${(d.store||'STORE').replace(/[^A-Z0-9]+/gi,'_')}_${d.tanggal||'DRAFT'}.doc`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}}
 async function wtAmLoadFollowups(){const store=wtAmVal('wtFuStore');const sel=document.getElementById('wtFuFinding');if(!store){sel.innerHTML='<option value="">Pilih store terlebih dahulu</option>';return;}try{const r=await apiGet('recentWalkthrough',{store,limit:5000,role:'PUBLIC',userStore:''});const rows=(r.data||[]).filter(x=>String(x.STATUS||x.status||'').toUpperCase()!=='DRAFT');sel.innerHTML='<option value="">Pilih temuan</option>'+rows.map(x=>{const id=x.ID||x.id;const text=(x.TANGGAL||x.tanggal||'')+' · '+(x.TEMUAN||x.temuan||'').slice(0,100);return `<option value="${escapeAttr(id)}">${escapeHtml(text)}</option>`;}).join('');wtAmSetMsg('wtFuMessage',rows.length+' temuan ditemukan.');}catch(e){wtAmSetMsg('wtFuMessage','Gagal memuat temuan: '+e.message);}}
 async function wtAmSubmitFollowup(){const id=wtAmVal('wtFuFinding');if(!id){wtAmSetMsg('wtFuMessage','Pilih temuan yang akan di-follow up.');return;}const action=wtAmVal('wtFuAction').trim();if(!action){wtAmSetMsg('wtFuMessage','Detail tindakan follow up wajib diisi.');return;}try{const photo=wtAmSelectedPhoto('wtFuPhoto');const payload={action:'wtAmPublicFollowup',id,status:wtAmVal('wtFuStatus'),tanggalProgress:wtAmVal('wtFuDate')||todayISO(),tindakan:action,keterangan:wtAmVal('wtFuNote').trim()};if(photo){payload.fotoProgress=await fileToDataURL(photo);payload.mimeTypeProgress=photo.type||'image/jpeg';}const r=await apiPost(payload);wtAmSetMsg('wtFuMessage','Follow up berhasil disimpan untuk '+id+'.');document.getElementById('wtFuAction').value='';document.getElementById('wtFuNote').value='';['wtFuPhotoGallery','wtFuPhotoCamera'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.value='';});const fup=document.getElementById('wtFuPhotoPreview');if(fup)fup.innerHTML='';await wtAmLoadFollowups();await loadWalkthrough();}catch(e){wtAmSetMsg('wtFuMessage','Gagal menyimpan follow up: '+e.message);}}
@@ -3394,3 +3460,9 @@ async function wtAmSubmitFollowup(){const id=wtAmVal('wtFuFinding');if(!id){wtAm
 
 </body>
 </html>
+
+<style id="wt-am-file-photo-ui">.photo-preview img{display:none!important}.photo-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.photo-preview .btn{max-width:100%;overflow-wrap:anywhere;white-space:normal;text-align:left}#wtAmExtraFindings .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#wtAmExtraFindings .field.full-row{grid-column:1/-1}@media(max-width:640px){#wtAmExtraFindings .grid{grid-template-columns:1fr}}</style>
+
+<style id="universal-photo-file-ui">.preview img,.photo-preview img{display:none!important}.preview,.photo-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.photo-file-link,.preview .btn,.photo-preview .btn{max-width:100%;overflow-wrap:anywhere;white-space:normal;text-align:left}.universal-photo-actions button{min-height:38px}</style>
+
+<style id="global-photo-file-only">.photo-box img,.photo-card img,.photo-preview img,.preview img{display:none!important}.photo-file-card{display:flex;align-items:center;gap:8px}.photo-file-link{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:left}.universal-photo-actions{display:flex;gap:8px;flex-wrap:wrap}.universal-photo-actions button{min-height:38px}</style>
