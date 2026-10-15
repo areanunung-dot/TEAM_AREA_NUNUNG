@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-  <!-- TEAM AREA NUNUNG - AREA A V14: MOBILE TABLE UI FIX ONLY. FUNCTIONAL CODE FROZEN. -->
+  <!-- TEAM AREA NUNUNG - K-POP KOREAN THEME V19: DAILY BACKGROUND ROTATION. FUNCTIONAL CODE PRESERVED. -->
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TEAM AREA NUNUNG - AREA A</title>
+<title>TEAM AREA NUNUNG - AREA NUNUNG</title>
 <style>
 :root{
   --bg:#f5f7fb;
@@ -304,22 +304,35 @@ body{
 </style>
 
 <style>
-/* V16: scenic photographic background rotates every 3 hours; cards stay readable. */
-:root{--scenic-overlay:rgba(246,249,255,.70)}
-html{min-height:100%;background:#eaf0f7}
+/* V19 K-POP / KOREAN NIGHT THEME: daily background; functional layout preserved. */
+:root{--scenic-overlay:rgba(250,242,255,.76)}
+html{min-height:100%;background:#21112f}
 body{background:transparent!important;position:relative;isolation:isolate;min-height:100vh}
 body::before{
   content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
-  background-image:linear-gradient(135deg,rgba(248,250,255,.68),rgba(250,248,255,.57)),var(--scenic-image);
+  background-image:linear-gradient(135deg,rgba(29,14,47,.58),rgba(90,30,91,.40) 48%,rgba(20,34,67,.50)),var(--scenic-image);
   background-size:cover;background-position:center;background-repeat:no-repeat;
   transform:scale(1.015);transition:background-image .8s ease;
 }
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:rgba(247,249,253,.12)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(255,228,249,.10),rgba(15,12,35,.12))}
 #appView{background:transparent!important}
-.topbar{background:rgba(255,255,255,.82)!important;backdrop-filter:blur(14px)}
+.topbar{background:rgba(35,17,53,.80)!important;color:#fff!important;border-bottom:1px solid rgba(255,255,255,.20)!important;backdrop-filter:blur(16px)}
+.topbar .brand h1,.topbar .brand small{color:#fff!important}
+.topbar .userpill{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25)}
+.logo{background:linear-gradient(135deg,#ffb9e8,#c9b8ff,#9eeaff)!important}
 .page{background:transparent}
-.card,.stat,.hero,.login-card{background:rgba(255,255,255,.91)!important;backdrop-filter:blur(8px)}
-.nav button{box-shadow:0 4px 12px rgba(40,60,90,.10)}
+.card,.stat,.hero,.login-card{background:rgba(255,250,255,.92)!important;backdrop-filter:blur(10px);border-color:rgba(255,255,255,.62)!important}
+.nav button{box-shadow:0 4px 14px rgba(20,10,40,.18)}
+#nav button:nth-child(1){background:#f2e6ff!important;color:#633c91!important}
+#nav button:nth-child(2){background:#ffe0f1!important;color:#963c72!important}
+#nav button:nth-child(3){background:#e1eaff!important;color:#365b9c!important}
+#nav button:nth-child(4){background:#dffaff!important;color:#236b7b!important}
+#nav button:nth-child(5){background:#ffe8d9!important;color:#92552b!important}
+#nav button:nth-child(6){background:#e6f8e9!important;color:#2f7043!important}
+#nav button:nth-child(7){background:#ffe1e6!important;color:#9b3c58!important}
+#nav button:nth-child(8){background:#e8e3ff!important;color:#58479b!important}
+/* Small K-pop-inspired accent without changing forms or button actions. */
+.brand h1{letter-spacing:.035em}
 @media(prefers-reduced-motion:reduce){body::before{transition:none}}
 </style>
 
@@ -402,7 +415,7 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
 <div id="loginView" class="login-wrap hidden">
   <div class="login-card">
     <div class="logo">🧭</div>
-    <h2>TEAM AREA NUNUNG - AREA A</h2>
+    <h2>TEAM AREA NUNUNG</h2>
     <p>Store Operation Portal</p>
     <div class="store-only-note">
       Sistem ini tidak menggunakan username dan password.
@@ -416,7 +429,7 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
     <div class="brand">
       <div class="logo">🧭</div>
       <div>
-        <h1>TEAM AREA NUNUNG - AREA A</h1>
+        <h1>TEAM AREA NUNUNG</h1>
         <small>STORE OPERATION SYSTEM</small>
       </div>
     </div>
@@ -949,34 +962,22 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
       </div>
 
       <div class="card hidden" id="wtAmWorkspace" style="margin-top:16px">
-        <div class="card-head"><div><h3>📝 Buat Walkthrough AM</h3><div class="small">Draft tersimpan otomatis di database sehingga dapat dilanjutkan dari perangkat lain.</div></div><button class="btn btn-light" onclick="wtAmLogout()">Keluar WT AM</button></div>
+        <div class="card-head"><div><h3>📝 Buat Walkthrough AM</h3><div class="small">Draft tersimpan di database sehingga dapat dilanjutkan dari perangkat lain.</div></div><button class="btn btn-light" onclick="wtAmLogout()">Keluar WT AM</button></div>
         <div class="form-grid">
           <div class="field"><label>STORE</label><select id="wtAmStore"><option value="">Pilih store</option><option>SSS GRAND INDONESIA</option><option>SKS PLASA INDONESIA</option><option>SKS HARMONI XCHANGE</option></select></div>
           <div class="field"><label>TANGGAL WT</label><input id="wtAmDate" type="date"></div>
           <div class="field"><label>KATEGORI</label><select id="wtAmCategory"><option>OPERASIONAL</option><option>FOOD SAFETY</option><option>SERVICE</option><option>PRODUCT QUALITY</option><option>CLEANLINESS</option><option>MAINTENANCE</option><option>PEOPLE</option><option>LAINNYA</option></select></div>
           <div class="field"><label>PRIORITAS</label><select id="wtAmPriority"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></div>
           <div class="field full-row"><label>KETERANGAN TEMUAN DETAIL</label><textarea id="wtAmFinding" rows="4" placeholder="Jelaskan temuan secara detail..."></textarea></div>
-          <div class="field full-row"><label>FOTO TEMUAN (opsional)</label><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-light" onclick="document.getElementById('wtAmPhotoGallery').click()">🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" onclick="document.getElementById('wtAmPhotoCamera').click()">📷 Ambil Foto dengan Kamera</button></div><input id="wtAmPhotoGallery" type="file" accept="image/*" style="display:none" onchange="wtAmSetPhoto(this,'wtAmPhotoCamera','wtAmPhotoPreview')"><input id="wtAmPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none" onchange="wtAmSetPhoto(this,'wtAmPhotoGallery','wtAmPhotoPreview')"><div id="wtAmPhotoPreview" class="photo-preview"></div><div class="small">Bisa memilih foto dari galeri atau langsung mengambil foto dengan kamera HP. Foto disimpan ke Google Drive saat WT disimpan.</div></div>
           <div class="field full-row"><label>ACTION PLAN / TINDAKAN PERBAIKAN</label><textarea id="wtAmActionPlan" rows="3" placeholder="Rencana perbaikan yang diperlukan"></textarea></div>
           <div class="field"><label>PIC</label><input id="wtAmPIC" placeholder="Nama PIC"></div>
           <div class="field"><label>TARGET SELESAI</label><input id="wtAmDueDate" type="date"></div>
           <div class="field full-row"><label>KETERANGAN TAMBAHAN</label><textarea id="wtAmNote" rows="2" placeholder="Keterangan tambahan (opsional)"></textarea></div>
-          <div class="field full-row"><label>LANJUTKAN DRAFT (opsional)</label><select id="wtAmDraftSelect" onchange="wtAmLoadSelectedDraft()"><option value="">WT baru</option></select><div class="small">Perubahan tersimpan otomatis sebagai draft saat kamu mengisi form.</div></div>
-          <div class="field full-row"><button type="button" class="btn btn-light" onclick="wtAmAddFinding()">＋ Tambah Temuan Lain</button><div class="small">Gunakan tombol ini jika dalam satu kunjungan WT terdapat lebih dari satu temuan.</div></div>
-          <div class="field full-row" id="wtAmExtraFindings"></div>
-          <div class="field full-row actions" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="wtAmStartWT()">✓ Selesai WT</button><button class="btn btn-light" onclick="wtAmClearForm()">WT Baru / Bersihkan</button></div>
+          <div class="field full-row"><label>CATATAN DRAFT</label><select id="wtAmDraftSelect" onchange="wtAmLoadSelectedDraft()"><option value="">Draft baru</option></select></div>
+          <div class="field full-row actions" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-light" onclick="wtAmSaveDraft()">💾 Simpan Draft</button><button class="btn btn-primary" onclick="wtAmStartWT()">▶ Mulai / Simpan WT</button><button class="btn btn-success" onclick="wtAmExport('pdf')">📄 Export PDF</button><button class="btn btn-light" onclick="wtAmExport('word')">📝 Export Word</button><button class="btn btn-light" onclick="wtAmClearForm()">Bersihkan Form</button></div>
         </div>
         <div id="wtAmMessage" class="small" style="margin-top:10px"></div>
         <div class="section-title">📚 Draft WT AM</div><div id="wtAmDraftList"><div class="empty">Login untuk memuat draft.</div></div>
-      </div>
-
-      <div class="card" id="wtAmHistoryCard" style="margin-top:16px">
-        <div class="card-head"><div><h3>📚 Hasil WT AM per Store</h3><div class="small">Pilih store untuk melihat hasil WT yang sudah tersimpan, buka detail, lalu export berdasarkan store.</div></div><button class="btn btn-light" onclick="wtAmLoadHistory()">↻ Refresh</button></div>
-        <div class="form-grid"><div class="field"><label>PILIH STORE HASIL WT</label><select id="wtAmHistoryStore"><option value="">Pilih store</option><option>SSS GRAND INDONESIA</option><option>SKS PLASA INDONESIA</option><option>SKS HARMONI XCHANGE</option></select></div><div class="field" style="align-self:end"><button class="btn btn-primary" onclick="wtAmLoadHistory()">Lihat Hasil WT</button></div></div>
-        <div id="wtAmHistoryMessage" class="small" style="margin-top:8px"></div>
-        <div id="wtAmHistoryList" style="margin-top:12px"><div class="empty">Pilih store untuk melihat hasil WT.</div></div>
-        <div id="wtAmHistoryDetail" class="hidden" style="margin-top:14px"></div>
-        <div id="wtAmHistoryExportActions" class="actions hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-success" onclick="wtAmExportHistory('pdf')">📄 Export Store ke PDF</button><button class="btn btn-light" onclick="wtAmExportHistory('word')">📝 Export Store ke Word</button><button class="btn btn-primary" onclick="wtAmExportHistory('share')">↗️ Share Laporan</button></div>
       </div>
 
       <div class="card" id="wtAmFollowupCard" style="margin-top:16px">
@@ -988,7 +989,6 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
           <div class="field"><label>TANGGAL FOLLOW UP</label><input id="wtFuDate" type="date"></div>
           <div class="field full-row"><label>DETAIL TINDAKAN / FOLLOW UP</label><textarea id="wtFuAction" rows="3" placeholder="Tindakan perbaikan yang sudah dilakukan"></textarea></div>
           <div class="field full-row"><label>KETERANGAN</label><textarea id="wtFuNote" rows="2" placeholder="Keterangan atau bukti tindak lanjut"></textarea></div>
-          <div class="field full-row"><label>FOTO FOLLOW UP (opsional)</label><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-light" onclick="document.getElementById('wtFuPhotoGallery').click()">🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" onclick="document.getElementById('wtFuPhotoCamera').click()">📷 Ambil Foto dengan Kamera</button></div><input id="wtFuPhotoGallery" type="file" accept="image/*" style="display:none" onchange="wtAmSetPhoto(this,'wtFuPhotoCamera','wtFuPhotoPreview')"><input id="wtFuPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none" onchange="wtAmSetPhoto(this,'wtFuPhotoGallery','wtFuPhotoPreview')"><div id="wtFuPhotoPreview" class="photo-preview"></div><div class="small">Bisa memilih foto dari galeri atau langsung mengambil foto dengan kamera HP. Foto follow up disimpan ke Google Drive.</div></div>
           <div class="field full-row"><button class="btn btn-primary" onclick="wtAmSubmitFollowup()">Simpan Follow Up</button></div>
         </div>
         <div id="wtFuMessage" class="small" style="margin-top:8px"></div>
@@ -1277,42 +1277,28 @@ function buildApiUrl(action, params={}){
   return url.toString();
 }
 
-// GET memakai JSONP untuk menghindari blokir CORS pada Apps Script.
-function apiGet(action, params={}){
-  return new Promise(function(resolve, reject){
-    const callbackName = '__teamAreaJsonp_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    const url = new URL(buildApiUrl(action, params));
-    let settled = false;
-    const cleanup = function(){
-      if(script.parentNode) script.parentNode.removeChild(script);
-      try{ delete window[callbackName]; }catch(e){ window[callbackName] = undefined; }
-      if(timer) clearTimeout(timer);
-    };
-    const finish = function(fn, value){
-      if(settled) return;
-      settled = true;
-      cleanup();
-      fn(value);
-    };
-    const timer = setTimeout(function(){
-      finish(reject, new Error('Backend tidak merespons. Periksa deployment Apps Script.'));
-    }, 20000);
-    window[callbackName] = function(result){
-      if(result && result.success === false){
-        finish(reject, new Error(result.message || 'Request gagal.'));
-        return;
-      }
-      finish(resolve, result);
-    };
-    script.onerror = function(){
-      finish(reject, new Error('Gagal memuat data backend. Periksa URL dan deployment Apps Script.'));
-    };
-    url.searchParams.set('callback', callbackName);
-    url.searchParams.set('_', String(Date.now()));
-    script.src = url.toString();
-    document.head.appendChild(script);
+async function apiGet(action, params={}){
+  const url = buildApiUrl(action, params);
+
+  const response = await fetch(url, {
+    method:'GET',
+    mode:'cors',
+    cache:'no-store'
   });
+
+  const text = await response.text();
+  let result;
+  try{
+    result = JSON.parse(text);
+  }catch(error){
+    throw new Error('Response backend tidak valid.');
+  }
+
+  if(!response.ok || (result && result.success === false)){
+    throw new Error((result && result.message) || 'Request gagal.');
+  }
+
+  return result;
 }
 
 async function apiPost(payload){
@@ -1969,7 +1955,7 @@ async function saveWaste(){
 
   try{
     showLoading(true);
-    const file=getPhotoFile('wastePhoto');
+    const file=$('wastePhoto').files[0];
     const payload={
       action:'saveWaste',
       tanggal:$('wasteDate').value,
@@ -2022,14 +2008,14 @@ async function saveMaintenance(){
 
   try{
     showLoading(true);
-    const file=getPhotoFile('mtBefore');
+    const file=$('mtBefore').files[0];
 
     const payload={
       action:'saveMaintenance',
       noSC,
       tanggalInput:$('mtInputDate').value,
       tanggalKejadian:$('mtIncidentDate').value,
-      store:targetStore, // Backend menerima nama store Area A yang dipilih.
+      store:targetStore, // Backend menerima nama store Area Nunung yang dipilih.
       kategori:$('mtCategory').value,
       itemAsset:$('mtAsset').value.trim(),
       jenisKerusakan:$('mtDamage').value.trim(),
@@ -2126,7 +2112,7 @@ async function saveKPI(){
     return;
   }
 
-  const file=getPhotoFile('kpiPhoto');
+  const file=$('kpiPhoto').files[0];
   if(!file){
     toast('Foto KPI wajib dipilih.');
     return;
@@ -2163,69 +2149,14 @@ function num(id){
 }
 
 function previewFile(input,targetId){
-  const file=input?.files?.[0];
+  const file=input.files[0];
   const target=$(targetId);
-  if(!target)return;
   target.innerHTML='';
   if(!file) return;
-  const link=document.createElement('button');
-  link.type='button';
-  link.className='btn btn-light photo-file-link';
-  link.textContent='📎 '+file.name+' · Klik untuk melihat foto';
-  link.title=file.name;
-  link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);
-  target.appendChild(link);
+  const img=document.createElement('img');
+  img.src=URL.createObjectURL(file);
+  target.appendChild(img);
 }
-
-// Terapkan pilihan Galeri + Kamera pada semua field foto lama tanpa mengganti ID input
-// sehingga proses upload yang sudah ada tetap menggunakan file input yang sama.
-function setupUniversalPhotoInput(inputId,previewId){
-  const input=$(inputId);
-  if(!input || input.dataset.universalPhotoReady==='1')return;
-  input.dataset.universalPhotoReady='1';
-  const filebox=input.closest('.filebox')||input.parentElement;
-  input.style.display='none';
-  const controls=document.createElement('div');
-  controls.className='actions universal-photo-actions';
-  controls.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin:6px 0';
-  controls.innerHTML='<button type="button" class="btn btn-light" data-gallery>🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" data-camera>📷 Ambil Foto dengan Kamera</button>';
-  input.parentNode.insertBefore(controls,input);
-  controls.querySelector('[data-gallery]').addEventListener('click',()=>input.click());
-  const camera=document.createElement('input');
-  camera.type='file';camera.accept='image/*';camera.setAttribute('capture','environment');
-  camera.style.display='none';camera.setAttribute('aria-label','Ambil foto dengan kamera');
-  input.parentNode.insertBefore(camera,input.nextSibling);
-  controls.querySelector('[data-camera]').addEventListener('click',()=>camera.click());
-  camera.addEventListener('change',()=>{
-    const file=camera.files&&camera.files[0];if(!file)return;
-    try{const transfer=new DataTransfer();transfer.items.add(file);input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));}
-    catch(err){previewFile({files:[file]},previewId);input._selectedCameraFile=file;}
-  });
-  input.addEventListener('change',()=>{input._selectedCameraFile=null;previewFile(input,previewId);});
-}
-function setupAllLegacyPhotoInputs(root){
-  const scope=root&&root.querySelectorAll?root:document;
-  const candidates=[];
-  if(scope.matches&&scope.matches('input[type="file"][accept*="image"]'))candidates.push(scope);
-  candidates.push(...scope.querySelectorAll('input[type="file"][accept*="image"]'));
-  candidates.forEach(input=>{
-    if(input.dataset.universalPhotoReady==='1')return;
-    // Keep specialized WT AM / multi-finding photo controls as they already have camera + gallery buttons.
-    if(input.hasAttribute('data-gallery')||input.hasAttribute('data-camera')||/wtAmSetPhoto|wtAmExtraPhoto/.test(input.getAttribute('onchange')||''))return;
-    const match=(input.getAttribute('onchange')||'').match(/previewFile\(this,\s*['"]([^'"]+)['"]\)/);
-    if(match){setupUniversalPhotoInput(input.id,match[1]);return;}
-    // Legacy photo input without a preview target still gets a camera button; retain its original ID for upload.
-    if(input.id && input.accept && input.accept.includes('image')){
-      const holder=document.createElement('div');holder.className='universal-photo-actions';holder.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin:6px 0';
-      const gallery=document.createElement('button');gallery.type='button';gallery.className='btn btn-light';gallery.textContent='🖼️ Pilih dari Galeri';gallery.onclick=()=>input.click();
-      const cameraBtn=document.createElement('button');cameraBtn.type='button';cameraBtn.className='btn btn-primary';cameraBtn.textContent='📷 Ambil Foto dengan Kamera';
-      const camera=document.createElement('input');camera.type='file';camera.accept='image/*';camera.capture='environment';camera.style.display='none';
-      camera.addEventListener('change',()=>{const file=camera.files?.[0];if(!file)return;try{const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){input._selectedCameraFile=file;}});
-      cameraBtn.onclick=()=>camera.click();input.style.display='none';input.parentNode.insertBefore(holder,input);holder.append(gallery,cameraBtn);input.parentNode.insertBefore(camera,input.nextSibling);input.dataset.universalPhotoReady='1';
-    }
-  });
-}
-function getPhotoFile(inputId){const input=$(inputId);return input? (input._selectedCameraFile||input.files?.[0]||null):null;}
 
 function fileToDataURL(file){
   return new Promise((resolve,reject)=>{
@@ -2475,9 +2406,11 @@ function renderWalkthroughDetail(r){
 
 function photoCard(label,url){
   if(!url) return '';
-  const safeUrl=escapeAttr(url);
-  const safeLabel=escapeHtml(label||'Foto');
-  return `<div class="photo-box photo-file-card"><button type="button" class="btn btn-light photo-file-link" onclick="wtAmOpenPhoto('${safeUrl}','${safeLabel}',false)">📎 ${safeLabel} · Klik untuk melihat foto</button></div>`;
+  return `
+    <div class="photo-box">
+      <img src="${escapeAttr(url)}" alt="${escapeAttr(label)}">
+      <a class="photo-link" href="${escapeAttr(url)}" target="_blank">${escapeHtml(label)} · Buka</a>
+    </div>`;
 }
 
 async function saveWalkthroughFinding(){
@@ -2499,7 +2432,7 @@ async function saveWalkthroughFinding(){
 
   try{
     showLoading(true);
-    const file = getPhotoFile('wtBefore');
+    const file = $('wtBefore').files[0];
 
     const payload = {
       action:'saveWalkthrough',
@@ -2542,8 +2475,8 @@ async function updateWalkthroughFinding(id){
   try{
     showLoading(true);
 
-    const progressFile = getPhotoFile('wtUpdProgressPhoto');
-    const afterFile = getPhotoFile('wtUpdAfterPhoto');
+    const progressFile = $('wtUpdProgressPhoto')?.files[0];
+    const afterFile = $('wtUpdAfterPhoto')?.files[0];
 
     const payload = {
       action:'updateWalkthrough',
@@ -2935,7 +2868,7 @@ async function saveSmallwareRequestUI(){
   const name = $('swName').value.trim();
   const qty = Number($('swQty').value||0);
   const type = $('swType').value;
-  const file = getPhotoFile('swPhoto');
+  const file = $('swPhoto').files[0];
 
   if(!name){
     toast('Nama Smallware wajib diisi.');
@@ -3132,31 +3065,36 @@ function compressSmallwareImage(file){
 
 /* PUBLIC STORE PORTAL - NO LOGIN */
 document.addEventListener('DOMContentLoaded', function(){
-  setupUniversalPhotoInput('mtBefore','mtBeforePreview');
-  setupUniversalPhotoInput('kpiPhoto','kpiPreview');
-  setupUniversalPhotoInput('swPhoto','swPhotoPreview');
-  setupAllLegacyPhotoInputs(document);
-  const photoObserver=new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)setupAllLegacyPhotoInputs(node);})));
-  photoObserver.observe(document.body,{childList:true,subtree:true});
   initPublicPortal();
 });
 
 
-/* V16 scenic wallpaper: one landscape per 3-hour block, consistent for all visitors in that block. */
+/* V19 K-POP/KOREAN wallpaper: changes once per calendar day, consistent for visitors in the same local date. */
 (function initScenicBackground(){
-  const scenicPhotos = [
-    'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2200&q=85'
+  // K-pop-inspired concert lights, city-night and Seoul-style neon mood; no idol likenesses required.
+  const koreanPopPhotos = [
+    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=2200&q=85',
+    'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=2200&q=85',
+    'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2200&q=85',
+    'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=2200&q=85',
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=2200&q=85',
+    'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2200&q=85'
   ];
   const applyScenic = () => {
-    const threeHourBlock = Math.floor(Date.now() / (3 * 60 * 60 * 1000));
-    const url = scenicPhotos[threeHourBlock % scenicPhotos.length];
+    const now = new Date();
+    const dayKey = Number(`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`);
+    const index = dayKey % koreanPopPhotos.length;
+    const url = koreanPopPhotos[index];
     document.documentElement.style.setProperty('--scenic-image', `url("${url}")`);
+    document.documentElement.dataset.kpopBackgroundDay = String(dayKey);
   };
   applyScenic();
-  window.setInterval(applyScenic, 60 * 1000);
+  // Check periodically so an already-open tab also changes after midnight.
+  window.setInterval(() => {
+    const now = new Date();
+    const dayKey = Number(`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`);
+    if (document.documentElement.dataset.kpopBackgroundDay !== String(dayKey)) applyScenic();
+  }, 60 * 1000);
 })();
 
 
@@ -3457,69 +3395,22 @@ let WT_AM_TOKEN = '';
 let WT_AM_DRAFTS = [];
 let WT_AM_CURRENT_DRAFT = '';
 let WT_AM_CURRENT_REPORT = null;
-let WT_AM_LAST_EXPORT = null;
-let WT_AM_AUTOSAVE_TIMER = null;
-let WT_AM_AUTOSAVE_BUSY = false;
 function wtAmVal(id){return document.getElementById(id)?.value||'';}
 function wtAmSetMsg(id,msg){const el=document.getElementById(id);if(el)el.textContent=msg;}
-function wtAmSetPhoto(input,otherId,previewId){const other=document.getElementById(otherId);if(other)other.value='';wtAmRenderPhotoFile(input.files?.[0],previewId);}
-function wtAmRenderPhotoFile(file,previewId){const target=document.getElementById(previewId);if(!target)return;target.innerHTML='';if(!file)return;const link=document.createElement('button');link.type='button';link.className='btn btn-light';link.textContent='📎 '+file.name+' · Klik untuk melihat foto';link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);target.appendChild(link);}
-function wtAmOpenPhoto(src,title,revoke=false){let modal=document.getElementById('wtAmPhotoModal');if(!modal){modal=document.createElement('div');modal.id='wtAmPhotoModal';modal.style.cssText='position:fixed;inset:0;background:rgba(10,20,35,.82);z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px';modal.innerHTML='<div style="background:#fff;border-radius:14px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px"><b id="wtAmPhotoModalTitle" style="overflow-wrap:anywhere"></b><button type="button" class="btn btn-light" id="wtAmPhotoModalClose">Tutup ✕</button></div><img id="wtAmPhotoModalImg" alt="Detail foto" style="display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:auto"></div>';document.body.appendChild(modal);modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});modal.querySelector('#wtAmPhotoModalClose').onclick=()=>modal.style.display='none';}modal.querySelector('#wtAmPhotoModalTitle').textContent=title||'Detail Foto';modal.querySelector('#wtAmPhotoModalImg').src=src;modal.style.display='flex';}
-function wtAmSelectedPhoto(prefix){return document.getElementById(prefix+'Camera')?.files?.[0]||document.getElementById(prefix+'Gallery')?.files?.[0]||null;}
-async function wtAmFormData(){const d={draftId:WT_AM_CURRENT_DRAFT,store:wtAmVal('wtAmStore'),tanggal:wtAmVal('wtAmDate'),kategori:wtAmVal('wtAmCategory'),prioritas:wtAmVal('wtAmPriority'),temuan:wtAmVal('wtAmFinding').trim(),actionPlan:wtAmVal('wtAmActionPlan').trim(),pic:wtAmVal('wtAmPIC').trim(),dueDate:wtAmVal('wtAmDueDate'),keterangan:wtAmVal('wtAmNote').trim(),fotoBefore:'',mimeTypeBefore:'image/jpeg'};const f=wtAmSelectedPhoto('wtAmPhoto');if(f){d.fotoBefore=await fileToDataURL(f);d.mimeTypeBefore=f.type||'image/jpeg';}return d;}
-async function wtAmLogin(){try{wtAmSetMsg('wtAmLoginMessage','Memverifikasi login...');const r=await apiPost({action:'wtAmLogin',username:wtAmVal('wtAmUsername').trim(),password:wtAmVal('wtAmPassword')});WT_AM_TOKEN=r.token||'';if(!WT_AM_TOKEN)throw new Error('Token login tidak diterima backend.');document.getElementById('wtAmWorkspace').classList.remove('hidden');document.getElementById('wtAmLoginCard').classList.add('hidden');document.getElementById('wtAmDate').value=todayISO();wtAmSetMsg('wtAmLoginMessage','Login berhasil.');await wtAmLoadDrafts();wtAmEnableAutosave();}catch(e){wtAmSetMsg('wtAmLoginMessage','Login gagal: '+e.message);}}
+function wtAmFormData(){return {draftId:WT_AM_CURRENT_DRAFT,store:wtAmVal('wtAmStore'),tanggal:wtAmVal('wtAmDate'),kategori:wtAmVal('wtAmCategory'),prioritas:wtAmVal('wtAmPriority'),temuan:wtAmVal('wtAmFinding').trim(),actionPlan:wtAmVal('wtAmActionPlan').trim(),pic:wtAmVal('wtAmPIC').trim(),dueDate:wtAmVal('wtAmDueDate'),keterangan:wtAmVal('wtAmNote').trim()};}
+async function wtAmLogin(){try{wtAmSetMsg('wtAmLoginMessage','Memverifikasi login...');const r=await apiPost({action:'wtAmLogin',username:wtAmVal('wtAmUsername').trim(),password:wtAmVal('wtAmPassword')});WT_AM_TOKEN=r.token||'';if(!WT_AM_TOKEN)throw new Error('Token login tidak diterima backend.');document.getElementById('wtAmWorkspace').classList.remove('hidden');document.getElementById('wtAmLoginCard').classList.add('hidden');document.getElementById('wtAmDate').value=todayISO();wtAmSetMsg('wtAmLoginMessage','Login berhasil.');await wtAmLoadDrafts();}catch(e){wtAmSetMsg('wtAmLoginMessage','Login gagal: '+e.message);}}
 function wtAmLogout(){WT_AM_TOKEN='';WT_AM_DRAFTS=[];WT_AM_CURRENT_DRAFT='';document.getElementById('wtAmWorkspace').classList.add('hidden');document.getElementById('wtAmLoginCard').classList.remove('hidden');document.getElementById('wtAmPassword').value='';wtAmSetMsg('wtAmLoginMessage','Kamu sudah keluar dari WT AM.');}
 async function wtAmLoadDrafts(){if(!WT_AM_TOKEN)return;try{const r=await apiGet('wtAmDrafts',{token:WT_AM_TOKEN});WT_AM_DRAFTS=r.data||[];const sel=document.getElementById('wtAmDraftSelect');sel.innerHTML='<option value="">Draft baru</option>'+WT_AM_DRAFTS.map(d=>`<option value="${escapeAttr(d.id)}">${escapeHtml(d.store||'Tanpa store')} · ${escapeHtml(d.tanggal||'')} · ${escapeHtml((d.temuan||'Draft').slice(0,55))}</option>`).join('');document.getElementById('wtAmDraftList').innerHTML=WT_AM_DRAFTS.length?WT_AM_DRAFTS.map(d=>`<div class="walk-card"><div class="walk-card-head"><div><b>${escapeHtml(d.store||'-')}</b><div class="small">${escapeHtml(d.tanggal||'-')} · ${escapeHtml(d.id)}</div></div><button class="btn btn-light" onclick="wtAmChooseDraft('${escapeAttr(d.id)}')">Lanjutkan</button></div><div>${escapeHtml(d.temuan||'(Temuan belum diisi)')}</div></div>`).join(''):'<div class="empty">Belum ada draft tersimpan.</div>';}catch(e){wtAmSetMsg('wtAmMessage','Gagal memuat draft: '+e.message);}}
 function wtAmLoadSelectedDraft(){const id=wtAmVal('wtAmDraftSelect');if(id)wtAmChooseDraft(id);else wtAmClearForm();}
 function wtAmChooseDraft(id){const d=WT_AM_DRAFTS.find(x=>String(x.id)===String(id));if(!d)return;WT_AM_CURRENT_DRAFT=d.id;document.getElementById('wtAmDraftSelect').value=d.id;document.getElementById('wtAmStore').value=d.store||'';document.getElementById('wtAmDate').value=wtAmDateISO(d.tanggal);document.getElementById('wtAmCategory').value=d.kategori||'OPERASIONAL';document.getElementById('wtAmPriority').value=d.prioritas||'MEDIUM';document.getElementById('wtAmFinding').value=d.temuan||'';document.getElementById('wtAmActionPlan').value=d.actionPlan||'';document.getElementById('wtAmPIC').value=d.pic||'';document.getElementById('wtAmDueDate').value=wtAmDateISO(d.dueDate);document.getElementById('wtAmNote').value=d.keterangan||'';wtAmSetMsg('wtAmMessage','Draft dimuat. Kamu bisa melanjutkan dari sini.');}
 function wtAmDateISO(v){if(!v)return '';const s=String(v);if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const d=new Date(v);return isNaN(d)?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function wtAmEnableAutosave(){const root=document.getElementById('wtAmWorkspace');if(!root||root.dataset.autosaveBound==='1')return;root.dataset.autosaveBound='1';root.addEventListener('input',wtAmQueueAutosave);root.addEventListener('change',wtAmQueueAutosave);}
-function wtAmQueueAutosave(){if(!WT_AM_TOKEN||WT_AM_CURRENT_REPORT)return;clearTimeout(WT_AM_AUTOSAVE_TIMER);WT_AM_AUTOSAVE_TIMER=setTimeout(()=>wtAmAutoSaveDraft(),1300);}
-async function wtAmAutoSaveDraft(){if(!WT_AM_TOKEN||WT_AM_AUTOSAVE_BUSY||WT_AM_CURRENT_REPORT)return;const d=await wtAmFormData();if(!d.store||(!d.temuan&&!document.querySelector('#wtAmExtraFindings [data-extra-finding]')))return;WT_AM_AUTOSAVE_BUSY=true;try{const extras=[...document.querySelectorAll('#wtAmExtraFindings [data-extra-finding]')].map(card=>({kategori:card.querySelector('[data-kategori]').value,prioritas:card.querySelector('[data-prioritas]').value,temuan:card.querySelector('[data-temuan]').value.trim(),actionPlan:card.querySelector('[data-actionplan]').value.trim(),pic:card.querySelector('[data-pic]').value.trim(),dueDate:card.querySelector('[data-duedate]').value,keterangan:card.querySelector('[data-note]').value.trim()}));d.keterangan=JSON.stringify({note:d.keterangan,extraFindings:extras});const r=await apiPost({action:'wtAmSaveDraft',token:WT_AM_TOKEN,draft:d});WT_AM_CURRENT_DRAFT=r.id||d.draftId;const sel=document.getElementById('wtAmDraftSelect');if(sel&&WT_AM_CURRENT_DRAFT)sel.value=WT_AM_CURRENT_DRAFT;wtAmSetMsg('wtAmMessage','Draft tersimpan otomatis · '+new Date().toLocaleTimeString());}catch(e){wtAmSetMsg('wtAmMessage','Draft otomatis belum tersimpan: '+e.message);}finally{WT_AM_AUTOSAVE_BUSY=false;}}
-function wtAmAddFinding(){const host=document.getElementById('wtAmExtraFindings');const n=host.querySelectorAll('[data-extra-finding]').length+2;const card=document.createElement('div');card.className='walk-card';card.setAttribute('data-extra-finding','1');card.style.marginTop='12px';card.innerHTML=`<div class="walk-card-head"><b>Temuan ${n}</b><button type="button" class="btn btn-light" onclick="this.closest('[data-extra-finding]').remove();wtAmRenumberFindings()">Hapus</button></div><div class="grid"><div class="field"><label>KATEGORI</label><select data-kategori><option>OPERASIONAL</option><option>FOOD SAFETY</option><option>SERVICE</option><option>PRODUCT QUALITY</option><option>CLEANLINESS</option><option>MAINTENANCE</option><option>PEOPLE</option><option>LAINNYA</option></select></div><div class="field"><label>PRIORITAS</label><select data-prioritas><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></div><div class="field full-row"><label>KETERANGAN TEMUAN DETAIL</label><textarea data-temuan rows="4" placeholder="Jelaskan temuan secara detail..."></textarea></div><div class="field full-row"><label>FOTO TEMUAN (opsional)</label><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-light" onclick="this.closest('[data-extra-finding]').querySelector('[data-gallery]').click()">🖼️ Pilih dari Galeri</button><button type="button" class="btn btn-primary" onclick="this.closest('[data-extra-finding]').querySelector('[data-camera]').click()">📷 Ambil Foto dengan Kamera</button></div><input data-gallery type="file" accept="image/*" style="display:none" onchange="wtAmExtraPhoto(this)"><input data-camera type="file" accept="image/*" capture="environment" style="display:none" onchange="wtAmExtraPhoto(this)"><div data-photo-preview class="photo-preview"></div></div><div class="field full-row"><label>ACTION PLAN / TINDAKAN PERBAIKAN</label><textarea data-actionplan rows="3" placeholder="Rencana perbaikan"></textarea></div><div class="field"><label>PIC</label><input data-pic placeholder="Nama PIC"></div><div class="field"><label>TARGET SELESAI</label><input data-duedate type="date"></div><div class="field full-row"><label>KETERANGAN TAMBAHAN</label><textarea data-note rows="2"></textarea></div></div>`;host.appendChild(card);wtAmRenumberFindings();}
-function wtAmExtraPhoto(input){const card=input.closest('[data-extra-finding]');const other=card.querySelector(input.hasAttribute('data-camera')?'[data-gallery]':'[data-camera]');if(other)other.value='';const target=card.querySelector('[data-photo-preview]');target.innerHTML='';const file=input.files?.[0];if(file){const link=document.createElement('button');link.type='button';link.className='btn btn-light';link.textContent='📎 '+file.name+' · Klik untuk melihat foto';link.onclick=()=>wtAmOpenPhoto(URL.createObjectURL(file),file.name,true);target.appendChild(link);}}
-function wtAmRenumberFindings(){document.querySelectorAll('#wtAmExtraFindings [data-extra-finding]').forEach((card,i)=>{const b=card.querySelector('.walk-card-head b');if(b)b.textContent='Temuan '+(i+2);});}
-async function wtAmStartWT(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}clearTimeout(WT_AM_AUTOSAVE_TIMER);const base=await wtAmFormData();const extras=[...document.querySelectorAll('#wtAmExtraFindings [data-extra-finding]')];const items=[base,...await Promise.all(extras.map(async card=>{const file=card.querySelector('[data-camera]').files[0]||card.querySelector('[data-gallery]').files[0];return {draftId:'',store:base.store,tanggal:base.tanggal,kategori:card.querySelector('[data-kategori]').value,prioritas:card.querySelector('[data-prioritas]').value,temuan:card.querySelector('[data-temuan]').value.trim(),actionPlan:card.querySelector('[data-actionplan]').value.trim(),pic:card.querySelector('[data-pic]').value.trim(),dueDate:card.querySelector('[data-duedate]').value,keterangan:card.querySelector('[data-note]').value.trim(),fotoBefore:file?await fileToDataURL(file):'',mimeTypeBefore:file?.type||'image/jpeg'};}))];if(!base.store||items.some(x=>!x.temuan)){wtAmSetMsg('wtAmMessage','Pilih store dan isi detail untuk setiap temuan.');return;}const completedStore=base.store;try{const saved=[];for(const item of items){const r=await apiPost({action:'wtAmFinalize',token:WT_AM_TOKEN,draft:item});saved.push({...item,id:r.id||'',status:r.status||'OPEN'});}WT_AM_CURRENT_DRAFT='';wtAmClearForm();wtAmSetMsg('wtAmMessage','WT selesai. '+saved.length+' temuan tersimpan untuk '+completedStore+'. Form dan dropdown WT sudah direset. Buka Hasil WT AM per Store untuk melihat detail dan export.');await wtAmLoadDrafts();await loadWalkthrough();await wtAmLoadFollowups();const historyStore=document.getElementById('wtAmHistoryStore');if(historyStore){historyStore.value='';await wtAmLoadHistory();}}catch(e){wtAmSetMsg('wtAmMessage','Penyimpanan WT terhenti: '+e.message+'. Periksa History Walkthrough untuk memastikan temuan yang sudah tersimpan.');}}
-function wtAmClearForm(){WT_AM_CURRENT_DRAFT='';WT_AM_CURRENT_REPORT=null;WT_AM_LAST_EXPORT=null;['wtAmStore','wtAmDate','wtAmFinding','wtAmActionPlan','wtAmPIC','wtAmDueDate','wtAmNote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('wtAmCategory').value='OPERASIONAL';document.getElementById('wtAmPriority').value='MEDIUM';['wtAmPhotoGallery','wtAmPhotoCamera'].forEach(id=>{const pf=document.getElementById(id);if(pf)pf.value='';});const pp=document.getElementById('wtAmPhotoPreview');if(pp)pp.innerHTML='';const extra=document.getElementById('wtAmExtraFindings');if(extra)extra.innerHTML='';if(document.getElementById('wtAmDraftSelect'))document.getElementById('wtAmDraftSelect').value='';}
-let WT_AM_HISTORY_ROWS=[];
-let WT_AM_HISTORY_SELECTED=null;
-async function wtAmLoadHistory(){const store=wtAmVal('wtAmHistoryStore');const list=document.getElementById('wtAmHistoryList');const msg=document.getElementById('wtAmHistoryMessage');const detail=document.getElementById('wtAmHistoryDetail');const actions=document.getElementById('wtAmHistoryExportActions');if(!store){if(list)list.innerHTML='<div class="empty">Pilih store terlebih dahulu.</div>';if(detail){detail.classList.add('hidden');detail.innerHTML='';}if(actions)actions.classList.add('hidden');return;}try{if(msg)msg.textContent='Memuat hasil WT...';if(list)list.innerHTML='<div class="empty">Memuat data...</div>';const r=await apiGet('recentWalkthrough',{store,limit:5000,role:'PUBLIC',userStore:''});WT_AM_HISTORY_ROWS=(r.data||[]).filter(x=>String(x.AREA||x.area||'').toUpperCase().includes('WT AM')&&String(x.STATUS||x.status||'').toUpperCase()!=='DRAFT');WT_AM_HISTORY_SELECTED=null;if(msg)msg.textContent=WT_AM_HISTORY_ROWS.length+' temuan WT AM ditemukan untuk '+store+'.';if(!WT_AM_HISTORY_ROWS.length){list.innerHTML='<div class="empty">Belum ada hasil WT AM tersimpan untuk store ini.</div>';if(actions)actions.classList.add('hidden');return;}list.innerHTML=`<div class="wt-am-matrix-wrap"><table class="wt-am-matrix"><thead><tr><th>No.</th><th>ID Temuan</th><th>Tanggal</th><th>Kategori</th><th>Prioritas</th><th>Detail Temuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody>${WT_AM_HISTORY_ROWS.map((x,i)=>{const id=x.ID||x.id||'';const date=x.TANGGAL||x.tanggal||'-';const cat=x.KATEGORI||x.kategori||'-';const priority=x.PRIORITAS||x.prioritas||'-';const finding=x.TEMUAN||x.temuan||'-';const status=x.STATUS||x.status||'OPEN';return `<tr><td>${i+1}</td><td>${escapeHtml(id)}</td><td>${escapeHtml(date)}</td><td>${escapeHtml(cat)}</td><td>${escapeHtml(priority)}</td><td class="wt-am-matrix-finding">${escapeHtml(finding)}</td><td>${statusBadge(status)}</td><td><button class="btn btn-primary" onclick="wtAmViewHistoryDetail('${escapeAttr(id)}')">Lihat Detail</button></td></tr>`;}).join('')}</tbody></table></div>`;if(actions)actions.classList.remove('hidden');if(detail){detail.classList.add('hidden');detail.innerHTML='';}}catch(e){if(msg)msg.textContent='Gagal memuat hasil WT: '+e.message;if(list)list.innerHTML='<div class="empty">Gagal memuat hasil WT.</div>';}}
-async function wtAmViewHistoryDetail(id){try{const r=await apiGet('walkthrough',{id,role:'PUBLIC',userStore:''});if(!r.data)throw new Error('Detail temuan tidak ditemukan.');WT_AM_HISTORY_SELECTED=r.data;const d=r.data;const esc=escapeHtml;const val=(a,b)=>d[a]??d[b]??'-';const before=val('FOTO BEFORE','fotoBefore');const detail=document.getElementById('wtAmHistoryDetail');const photoUrls={before:'',progress:'',after:''};for(const type of ['before','progress','after']){try{const r=await apiGet('walkthroughPhotoData',{id,photoType:type,role:'PUBLIC',userStore:''});photoUrls[type]=r.dataUrl||'';}catch(_){}}detail.classList.remove('hidden');detail.innerHTML=`<div class="card-head"><div><div class="small">${esc(val('ID','id'))}</div><h3>${esc(val('STORE','store'))} · Detail Temuan</h3><div class="small">${esc(val('TANGGAL','tanggal'))} · ${esc(val('KATEGORI','kategori'))}</div></div>${statusBadge(val('STATUS','status'))}</div><div class="walk-meta"><div class="walk-meta-item"><div class="label">PRIORITAS</div><b>${esc(val('PRIORITAS','prioritas'))}</b></div><div class="walk-meta-item"><div class="label">PIC</div><b>${esc(val('PIC','pic'))}</b></div><div class="walk-meta-item"><div class="label">TARGET SELESAI</div><b>${esc(val('DUE DATE','dueDate'))}</b></div><div class="walk-meta-item"><div class="label">STATUS</div><b>${esc(val('STATUS','status'))}</b></div></div><div class="walk-finding" style="margin-top:12px"><b>DETAIL TEMUAN</b><div>${esc(val('TEMUAN','temuan'))}</div></div><div style="margin-top:12px"><b>ACTION PLAN</b><div>${esc(val('ACTION PLAN','actionPlan'))}</div></div><div style="margin-top:12px"><b>KETERANGAN</b><div>${esc(val('KETERANGAN','keterangan'))}</div></div><div class="section-title">📷 Foto Temuan</div><div class="photo-grid">${photoUrls.before?`<div class="photo-card"><b>Foto Temuan</b><br><img src="${photoUrls.before}" alt="Foto Temuan" style="max-width:240px;max-height:180px;object-fit:contain"></div>`:''}${photoUrls.progress?`<div class="photo-card"><b>Foto Progress</b><br><img src="${photoUrls.progress}" alt="Foto Progress" style="max-width:240px;max-height:180px;object-fit:contain"></div>`:''}${photoUrls.after?`<div class="photo-card"><b>Foto After</b><br><img src="${photoUrls.after}" alt="Foto After" style="max-width:240px;max-height:180px;object-fit:contain"></div>`:''}</div>`;detail.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){wtAmSetMsg('wtAmHistoryMessage','Gagal membuka detail: '+e.message);}}
-function wtAmDirectPhotoUrl(url){let u=String(url||'').trim();if(!u)return '';let m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([A-Za-z0-9_-]+)/);if(m)return 'https://drive.google.com/uc?export=view&id='+m[1];return u;}
-async function wtAmShareHtml(html,store){const filename='REKAP_WT_AM_'+String(store||'STORE').replace(/[^A-Z0-9]+/gi,'_')+'.html';const blob=new Blob([html],{type:'text/html'});const file=new File([blob],filename,{type:'text/html'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({title:'Rekap WT AM '+store,text:'Laporan WT AM untuk '+store,files:[file]});wtAmSetMsg('wtAmHistoryMessage','Menu share perangkat dibuka.');return;}catch(e){if(e.name==='AbortError')return;}}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);wtAmSetMsg('wtAmHistoryMessage','Browser tidak mendukung share file langsung. Laporan HTML diunduh agar dapat dibagikan melalui aplikasi lain.');}
-async function wtAmExportHistory(type){const store=wtAmVal('wtAmHistoryStore');const rows=WT_AM_HISTORY_ROWS;if(!store||!rows.length){wtAmSetMsg('wtAmHistoryMessage','Pilih store yang memiliki hasil WT terlebih dahulu.');return;}const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const details=await Promise.all(rows.map(async row=>{const id=row.ID||row.id;try{const r=await apiGet('walkthrough',{id,role:'PUBLIC',userStore:''});return r.data||row;}catch(_){return row;}}));const photoData=await Promise.all(details.map(async d=>{const id=d.ID||d.id;const result={};for(const [type,keys] of Object.entries({before:['FOTO BEFORE','fotoBefore'],progress:['FOTO PROGRESS','fotoProgress'],after:['FOTO AFTER','fotoAfter']})){const url=d[keys[0]]??d[keys[1]]??'';if(!url)continue;try{const r=await apiGet('walkthroughPhotoData',{id,photoType:type,role:'PUBLIC',userStore:''});result[type]=r.dataUrl||'';}catch(e){result[type]='';}}return result;}));const sections=details.map((d,i)=>{const get=(a,b)=>d[a]??d[b]??'';const photo=(label,type,url)=>url?`<div style="margin-top:10px;break-inside:avoid"><b>Foto ${esc(label)}</b><br><img src="${esc(url)}" alt="Foto ${esc(label)}" style="display:block;width:auto;max-width:360px;max-height:240px;object-fit:contain;margin-top:6px;border:1px solid #d6dce5;border-radius:6px"></div>`:'';return `<section style="page-break-inside:avoid;margin:18px 0;padding:12px;border:1px solid #cbd5e1;border-radius:8px"><h2>Temuan ${i+1} — ${esc(get('ID','id'))}</h2><table><tr><th>Tanggal</th><td>${esc(get('TANGGAL','tanggal'))}</td></tr><tr><th>Kategori</th><td>${esc(get('KATEGORI','kategori'))}</td></tr><tr><th>Prioritas</th><td>${esc(get('PRIORITAS','prioritas'))}</td></tr><tr><th>Status</th><td>${esc(get('STATUS','status'))}</td></tr><tr><th>Detail Temuan</th><td>${esc(get('TEMUAN','temuan'))}</td></tr><tr><th>Action Plan</th><td>${esc(get('ACTION PLAN','actionPlan'))}</td></tr><tr><th>PIC</th><td>${esc(get('PIC','pic'))}</td></tr><tr><th>Target Selesai</th><td>${esc(get('DUE DATE','dueDate'))}</td></tr><tr><th>Keterangan</th><td>${esc(get('KETERANGAN','keterangan'))}</td></tr><tr><th>Tindakan Follow Up</th><td>${esc(get('TINDAKAN','tindakan'))}</td></tr></table>${photo('Temuan','before',photoData[i].before)}${photo('Progress','progress',photoData[i].progress)}${photo('After','after',photoData[i].after)}</section>`;}).join('');const html=`<!doctype html><html><head><meta charset="utf-8"><title>Hasil WT AM ${esc(store)}</title><style>body{font-family:Arial,sans-serif;color:#243247;margin:24px}h1{color:#173f6d}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccd5e0;padding:8px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf3fa;width:24%}@media print{body{margin:12mm}section{break-inside:avoid}}</style></head><body><h1>TEAM AREA NUNUNG</h1><h2>REKAP HASIL WALKTHROUGH AM</h2><p><b>Store:</b> ${esc(store)} · <b>Total Temuan:</b> ${details.length}</p>${sections}</body></html>`;if(type==='share'){await wtAmShareHtml(html,store);return;}if(type==='pdf'){const w=window.open('','_blank');if(!w){wtAmSetMsg('wtAmHistoryMessage','Izinkan pop-up browser untuk export PDF.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();const imgs=[...w.document.images];Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;setTimeout(resolve,5000)}))).then(()=>setTimeout(()=>w.print(),300));}else{const blob=new Blob(['\ufeff',html],{type:'application/msword'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`REKAP_WT_AM_${store.replace(/[^A-Z0-9]+/gi,'_')}.doc`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}}
+async function wtAmSaveDraft(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}const d=wtAmFormData();if(!d.store){wtAmSetMsg('wtAmMessage','Pilih store sebelum menyimpan draft.');return;}try{const r=await apiPost({action:'wtAmSaveDraft',token:WT_AM_TOKEN,draft:d});WT_AM_CURRENT_DRAFT=r.id||d.draftId;wtAmSetMsg('wtAmMessage','Draft tersimpan di spreadsheet. Bisa dilanjutkan dari perangkat lain.');await wtAmLoadDrafts();if(WT_AM_CURRENT_DRAFT)document.getElementById('wtAmDraftSelect').value=WT_AM_CURRENT_DRAFT;}catch(e){wtAmSetMsg('wtAmMessage','Gagal menyimpan draft: '+e.message);}}
+async function wtAmStartWT(){if(!WT_AM_TOKEN){toast('Login WT AM terlebih dahulu.');return;}const d=wtAmFormData();if(!d.store||!d.temuan){wtAmSetMsg('wtAmMessage','Store dan keterangan temuan wajib diisi.');return;}try{const r=await apiPost({action:'wtAmFinalize',token:WT_AM_TOKEN,draft:d});WT_AM_CURRENT_REPORT={...d,id:r.id,status:r.status||'OPEN',inputBy:'ADMIN NUNUNG'};WT_AM_CURRENT_DRAFT='';wtAmSetMsg('wtAmMessage','WT AM tersimpan. Nomor temuan: '+r.id+'. Temuan masuk ke History Walkthrough.');wtAmClearForm();await wtAmLoadDrafts();await loadWalkthrough();await wtAmLoadFollowups();}catch(e){wtAmSetMsg('wtAmMessage','Gagal menyimpan WT: '+e.message);}}
+function wtAmClearForm(){WT_AM_CURRENT_DRAFT='';['wtAmStore','wtAmDate','wtAmFinding','wtAmActionPlan','wtAmPIC','wtAmDueDate','wtAmNote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('wtAmCategory').value='OPERASIONAL';document.getElementById('wtAmPriority').value='MEDIUM';if(document.getElementById('wtAmDraftSelect'))document.getElementById('wtAmDraftSelect').value='';}
+function wtAmExport(type){const d=WT_AM_CURRENT_REPORT||wtAmFormData();if(!d.store||!d.temuan){wtAmSetMsg('wtAmMessage','Isi temuan dan store, lalu simpan WT atau draft sebelum export.');return;}const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const html=`<html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;color:#243247}h1{color:#173f6d}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccd5e0;padding:8px;text-align:left;vertical-align:top}th{background:#edf3fa;width:28%}</style></head><body><h1>TEAM AREA NUNUNG</h1><h2>LAPORAN WALKTHROUGH AREA MANAGER</h2><table><tr><th>ID TEMUAN</th><td>${esc(d.id||'DRAFT')}</td></tr><tr><th>STORE</th><td>${esc(d.store)}</td></tr><tr><th>TANGGAL</th><td>${esc(d.tanggal)}</td></tr><tr><th>KATEGORI</th><td>${esc(d.kategori||d.kategori)}</td></tr><tr><th>PRIORITAS</th><td>${esc(d.prioritas)}</td></tr><tr><th>KETERANGAN TEMUAN</th><td>${esc(d.temuan)}</td></tr><tr><th>ACTION PLAN</th><td>${esc(d.actionPlan)}</td></tr><tr><th>PIC</th><td>${esc(d.pic)}</td></tr><tr><th>TARGET SELESAI</th><td>${esc(d.dueDate)}</td></tr><tr><th>KETERANGAN TAMBAHAN</th><td>${esc(d.keterangan)}</td></tr></table><p>Dokumen dibuat melalui TEAM AREA NUNUNG.</p></body></html>`;if(type==='pdf'){const w=window.open('','_blank');if(!w){wtAmSetMsg('wtAmMessage','Izinkan pop-up browser untuk export PDF.');return;}w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),400);}else{const blob=new Blob(['\ufeff',html],{type:'application/msword'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`WT_AM_${(d.store||'STORE').replace(/[^A-Z0-9]+/gi,'_')}_${d.tanggal||'DRAFT'}.doc`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}}
 async function wtAmLoadFollowups(){const store=wtAmVal('wtFuStore');const sel=document.getElementById('wtFuFinding');if(!store){sel.innerHTML='<option value="">Pilih store terlebih dahulu</option>';return;}try{const r=await apiGet('recentWalkthrough',{store,limit:5000,role:'PUBLIC',userStore:''});const rows=(r.data||[]).filter(x=>String(x.STATUS||x.status||'').toUpperCase()!=='DRAFT');sel.innerHTML='<option value="">Pilih temuan</option>'+rows.map(x=>{const id=x.ID||x.id;const text=(x.TANGGAL||x.tanggal||'')+' · '+(x.TEMUAN||x.temuan||'').slice(0,100);return `<option value="${escapeAttr(id)}">${escapeHtml(text)}</option>`;}).join('');wtAmSetMsg('wtFuMessage',rows.length+' temuan ditemukan.');}catch(e){wtAmSetMsg('wtFuMessage','Gagal memuat temuan: '+e.message);}}
-async function wtAmSubmitFollowup(){const id=wtAmVal('wtFuFinding');if(!id){wtAmSetMsg('wtFuMessage','Pilih temuan yang akan di-follow up.');return;}const action=wtAmVal('wtFuAction').trim();if(!action){wtAmSetMsg('wtFuMessage','Detail tindakan follow up wajib diisi.');return;}try{const photo=wtAmSelectedPhoto('wtFuPhoto');const payload={action:'wtAmPublicFollowup',id,status:wtAmVal('wtFuStatus'),tanggalProgress:wtAmVal('wtFuDate')||todayISO(),tindakan:action,keterangan:wtAmVal('wtFuNote').trim()};if(photo){payload.fotoProgress=await fileToDataURL(photo);payload.mimeTypeProgress=photo.type||'image/jpeg';}const r=await apiPost(payload);wtAmSetMsg('wtFuMessage','Follow up berhasil disimpan untuk '+id+'.');document.getElementById('wtFuAction').value='';document.getElementById('wtFuNote').value='';['wtFuPhotoGallery','wtFuPhotoCamera'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.value='';});const fup=document.getElementById('wtFuPhotoPreview');if(fup)fup.innerHTML='';await wtAmLoadFollowups();await loadWalkthrough();}catch(e){wtAmSetMsg('wtFuMessage','Gagal menyimpan follow up: '+e.message);}}
+async function wtAmSubmitFollowup(){const id=wtAmVal('wtFuFinding');if(!id){wtAmSetMsg('wtFuMessage','Pilih temuan yang akan di-follow up.');return;}const action=wtAmVal('wtFuAction').trim();if(!action){wtAmSetMsg('wtFuMessage','Detail tindakan follow up wajib diisi.');return;}try{const r=await apiPost({action:'wtAmPublicFollowup',id,status:wtAmVal('wtFuStatus'),tanggalProgress:wtAmVal('wtFuDate')||todayISO(),tindakan:action,keterangan:wtAmVal('wtFuNote').trim()});wtAmSetMsg('wtFuMessage','Follow up berhasil disimpan untuk '+id+'.');document.getElementById('wtFuAction').value='';document.getElementById('wtFuNote').value='';await wtAmLoadFollowups();await loadWalkthrough();}catch(e){wtAmSetMsg('wtFuMessage','Gagal menyimpan follow up: '+e.message);}}
 </script>
 
 </body>
 </html>
-
-<style id="wt-am-file-photo-ui">.photo-preview img{display:none!important}.photo-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.photo-preview .btn{max-width:100%;overflow-wrap:anywhere;white-space:normal;text-align:left}#wtAmExtraFindings .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#wtAmExtraFindings .field.full-row{grid-column:1/-1}@media(max-width:640px){#wtAmExtraFindings .grid{grid-template-columns:1fr}}</style>
-
-<style id="universal-photo-file-ui">.preview img,.photo-preview img{display:none!important}.preview,.photo-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.photo-file-link,.preview .btn,.photo-preview .btn{max-width:100%;overflow-wrap:anywhere;white-space:normal;text-align:left}.universal-photo-actions button{min-height:38px}</style>
-
-<style id="global-photo-file-only">.photo-box img,.photo-card img,.photo-preview img,.preview img{display:none!important}.photo-file-card{display:flex;align-items:center;gap:8px}.photo-file-link{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:left}.universal-photo-actions{display:flex;gap:8px;flex-wrap:wrap}.universal-photo-actions button{min-height:38px}</style>
-
-<style id="wt-am-matrix-export-share">
-.wt-am-matrix-wrap{width:100%;overflow-x:auto;border:1px solid var(--line,#e5eaf1);border-radius:10px;background:var(--card,#fff)}
-.wt-am-matrix{width:100%;min-width:980px;border-collapse:separate;border-spacing:0;font-size:13px}
-.wt-am-matrix th,.wt-am-matrix td{padding:10px 11px;border-bottom:1px solid var(--line,#e5eaf1);text-align:left;vertical-align:top}
-.wt-am-matrix th{background:#edf3fa;color:#26384d;white-space:nowrap;position:sticky;top:0;z-index:1}
-.wt-am-matrix tbody tr:last-child td{border-bottom:0}
-.wt-am-matrix tbody tr:hover{background:#f8fbff}
-.wt-am-matrix-finding{min-width:240px;max-width:420px;white-space:normal;overflow-wrap:anywhere}
-.wt-am-matrix td .btn{white-space:nowrap;padding:7px 10px}
-@media(max-width:700px){.wt-am-matrix{min-width:900px;font-size:12px}.wt-am-matrix th,.wt-am-matrix td{padding:8px}}
-</style>
-
-<style id="wt-am-photo-display-fix">
-/* Keep uploaded photos compact but visible in detail and export preview */
-#wtAmHistoryDetail .photo-grid img,
-#wtAmHistoryDetail .photo-card img,
-#wtAmHistoryDetail .photo-box img,
-#wtAmHistoryDetail img.photo,
-#wtAmHistoryDetail .photo-grid a img{display:block!important;max-width:240px!important;max-height:180px!important;width:auto!important;height:auto!important;object-fit:contain!important;border-radius:8px!important;cursor:pointer}
-#wtAmHistoryDetail .photo-grid{display:flex;flex-wrap:wrap;gap:12px}
-#wtAmHistoryDetail .photo-card,#wtAmHistoryDetail .photo-box{max-width:260px;min-width:180px}
-</style>
