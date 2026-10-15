@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-  <!-- TEAM AREA NUNUNG - K-POP KOREAN THEME V19: DAILY BACKGROUND ROTATION. FUNCTIONAL CODE PRESERVED. -->
+  <!-- TEAM AREA NUNUNG - V20: PHOTO FILE/CAMERA, RESET DROPDOWNS, WT AM RESULTS ONLY. -->
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TEAM AREA NUNUNG - AREA NUNUNG</title>
+<title>TEAM AREA NUNUNG - CONTROL STORE V20</title>
 <style>
 :root{
   --bg:#f5f7fb;
@@ -403,6 +403,13 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
 @media(prefers-reduced-motion:reduce){#nav button,button.btn,#salesHistoryBody tr td{transition:none!important}}
 </style>
 
+
+<style id="photo-file-camera-options">
+.camera-input,.file-picker-input{display:none!important}
+.photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.photo-actions label{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+</style>
+
 </head>
 <body>
 
@@ -446,7 +453,7 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
       <button data-page="waste" onclick="showPage('waste')">♻️ Waste</button>
       <button data-page="maintenance" onclick="showPage('maintenance')">🔧 Maintenance</button>
       <button data-page="kpi" onclick="showPage('kpi')">📊 KPI Store</button>
-      <button data-page="walkthrough" onclick="showPage('walkthrough')">📝 Walkthrough</button>
+      <button data-page="walkthrough" onclick="showPage('walkthrough')">📋 Hasil Walkthrough AM</button>
       <button data-page="smallware" onclick="showPage('smallware')">🍴 Smallware</button>
       <button data-page="soldout" onclick="showPage('soldout')">🚫 Rekap Sold Out</button>
     </nav>
@@ -837,7 +844,9 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
           <div class="field full-row">
             <label>FOTO BEFORE</label>
             <div class="filebox">
-              <input id="mtBefore" type="file" accept="image/*" onchange="previewFile(this,'mtBeforePreview')">
+              <input id="mtBefore" type="file" accept="image/*" class="file-picker-input" onchange="previewFile(this,'mtBeforePreview')">
+              <input id="mtBeforeCamera" type="file" accept="image/*" capture="environment" class="camera-input" onchange="useCameraPhoto(this,'mtBefore','mtBeforePreview')">
+              <div class="photo-actions"><label class="btn btn-light" for="mtBefore">📁 Pilih File</label><label class="btn btn-primary" for="mtBeforeCamera">📷 Buka Kamera</label></div>
               <div id="mtBeforePreview" class="preview"></div>
             </div>
           </div>
@@ -896,7 +905,9 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
           <div class="field full-row">
             <label>FOTO KPI *</label>
             <div class="filebox">
-              <input id="kpiPhoto" type="file" accept="image/*" onchange="previewFile(this,'kpiPreview')">
+              <input id="kpiPhoto" type="file" accept="image/*" class="file-picker-input" onchange="previewFile(this,'kpiPreview')">
+              <input id="kpiPhotoCamera" type="file" accept="image/*" capture="environment" class="camera-input" onchange="useCameraPhoto(this,'kpiPhoto','kpiPreview')">
+              <div class="photo-actions"><label class="btn btn-light" for="kpiPhoto">📁 Pilih File</label><label class="btn btn-primary" for="kpiPhotoCamera">📷 Buka Kamera</label></div>
               <div id="kpiPreview" class="preview"></div>
             </div>
           </div>
@@ -909,14 +920,14 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
 
     <section id="page-walkthrough" class="page-section hidden">
       <div class="hero">
-        <h2>📝 Walkthrough</h2>
-        <p id="walkthroughHeroSub">Temuan operasional dan tindak lanjut.</p>
+        <h2>📋 Hasil Walkthrough AM</h2>
+        <p id="walkthroughHeroSub">Hasil walkthrough yang diinput melalui website WT AM terpisah.</p>
       </div>
 
       <div class="card">
         <div class="card-head">
           <div>
-            <h3>🔎 Pencarian Store</h3>
+            <h3>🔎 Filter Hasil Walkthrough AM</h3>
             <div id="walkthroughAccessNote" class="small"></div>
           </div>
           <button class="btn btn-light" onclick="loadWalkthrough()">↻ Refresh</button>
@@ -939,7 +950,7 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
         <div class="card-head">
           <div>
             <h3>📋 Daftar Temuan</h3>
-            <div id="walkthroughAccessNote" class="small"></div>
+            <div class="small">Hasil dari website WT AM terpisah.</div>
           </div>
           <button class="btn btn-light" onclick="loadWalkthrough()">Refresh</button>
         </div>
@@ -951,48 +962,6 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
 
       <div id="walkthroughDetail" class="card hidden" style="margin-top:16px"></div>
 
-      <div class="card" id="wtAmLoginCard" style="margin-top:16px">
-        <div class="card-head"><div><h3>🔐 WT AM — Login Khusus</h3><div class="small">Login khusus Area Manager untuk membuat WT, menyimpan draft ke spreadsheet, dan export laporan.</div></div></div>
-        <div class="form-grid">
-          <div class="field"><label>USERNAME</label><input id="wtAmUsername" autocomplete="username" placeholder="Username WT AM"></div>
-          <div class="field"><label>PASSWORD</label><input id="wtAmPassword" type="password" autocomplete="current-password" placeholder="Password WT AM"></div>
-          <div class="field full-row"><button class="btn btn-primary" onclick="wtAmLogin()">Login WT AM</button></div>
-        </div>
-        <div id="wtAmLoginMessage" class="small" style="margin-top:8px"></div>
-      </div>
-
-      <div class="card hidden" id="wtAmWorkspace" style="margin-top:16px">
-        <div class="card-head"><div><h3>📝 Buat Walkthrough AM</h3><div class="small">Draft tersimpan di database sehingga dapat dilanjutkan dari perangkat lain.</div></div><button class="btn btn-light" onclick="wtAmLogout()">Keluar WT AM</button></div>
-        <div class="form-grid">
-          <div class="field"><label>STORE</label><select id="wtAmStore"><option value="">Pilih store</option><option>SSS GRAND INDONESIA</option><option>SKS PLASA INDONESIA</option><option>SKS HARMONI XCHANGE</option></select></div>
-          <div class="field"><label>TANGGAL WT</label><input id="wtAmDate" type="date"></div>
-          <div class="field"><label>KATEGORI</label><select id="wtAmCategory"><option>OPERASIONAL</option><option>FOOD SAFETY</option><option>SERVICE</option><option>PRODUCT QUALITY</option><option>CLEANLINESS</option><option>MAINTENANCE</option><option>PEOPLE</option><option>LAINNYA</option></select></div>
-          <div class="field"><label>PRIORITAS</label><select id="wtAmPriority"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></div>
-          <div class="field full-row"><label>KETERANGAN TEMUAN DETAIL</label><textarea id="wtAmFinding" rows="4" placeholder="Jelaskan temuan secara detail..."></textarea></div>
-          <div class="field full-row"><label>ACTION PLAN / TINDAKAN PERBAIKAN</label><textarea id="wtAmActionPlan" rows="3" placeholder="Rencana perbaikan yang diperlukan"></textarea></div>
-          <div class="field"><label>PIC</label><input id="wtAmPIC" placeholder="Nama PIC"></div>
-          <div class="field"><label>TARGET SELESAI</label><input id="wtAmDueDate" type="date"></div>
-          <div class="field full-row"><label>KETERANGAN TAMBAHAN</label><textarea id="wtAmNote" rows="2" placeholder="Keterangan tambahan (opsional)"></textarea></div>
-          <div class="field full-row"><label>CATATAN DRAFT</label><select id="wtAmDraftSelect" onchange="wtAmLoadSelectedDraft()"><option value="">Draft baru</option></select></div>
-          <div class="field full-row actions" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-light" onclick="wtAmSaveDraft()">💾 Simpan Draft</button><button class="btn btn-primary" onclick="wtAmStartWT()">▶ Mulai / Simpan WT</button><button class="btn btn-success" onclick="wtAmExport('pdf')">📄 Export PDF</button><button class="btn btn-light" onclick="wtAmExport('word')">📝 Export Word</button><button class="btn btn-light" onclick="wtAmClearForm()">Bersihkan Form</button></div>
-        </div>
-        <div id="wtAmMessage" class="small" style="margin-top:10px"></div>
-        <div class="section-title">📚 Draft WT AM</div><div id="wtAmDraftList"><div class="empty">Login untuk memuat draft.</div></div>
-      </div>
-
-      <div class="card" id="wtAmFollowupCard" style="margin-top:16px">
-        <div class="card-head"><div><h3>🛠️ Follow Up Temuan WT AM</h3><div class="small">Tanpa login. Pilih store dan temuan, lalu catat tindakan follow up.</div></div><button class="btn btn-light" onclick="wtAmLoadFollowups()">↻ Muat Temuan</button></div>
-        <div class="form-grid">
-          <div class="field full-row"><label>PILIH STORE</label><select id="wtFuStore" onchange="wtAmLoadFollowups()"><option value="">Pilih store</option><option>SSS GRAND INDONESIA</option><option>SKS PLASA INDONESIA</option><option>SKS HARMONI XCHANGE</option></select></div>
-          <div class="field full-row"><label>PILIH TEMUAN</label><select id="wtFuFinding"><option value="">Pilih store terlebih dahulu</option></select></div>
-          <div class="field"><label>STATUS FOLLOW UP</label><select id="wtFuStatus"><option>OPEN</option><option>ON PROGRESS</option><option>COMPLETED</option><option>CLOSED</option></select></div>
-          <div class="field"><label>TANGGAL FOLLOW UP</label><input id="wtFuDate" type="date"></div>
-          <div class="field full-row"><label>DETAIL TINDAKAN / FOLLOW UP</label><textarea id="wtFuAction" rows="3" placeholder="Tindakan perbaikan yang sudah dilakukan"></textarea></div>
-          <div class="field full-row"><label>KETERANGAN</label><textarea id="wtFuNote" rows="2" placeholder="Keterangan atau bukti tindak lanjut"></textarea></div>
-          <div class="field full-row"><button class="btn btn-primary" onclick="wtAmSubmitFollowup()">Simpan Follow Up</button></div>
-        </div>
-        <div id="wtFuMessage" class="small" style="margin-top:8px"></div>
-      </div>
     </section>
 
     <section id="page-soldout" class="page-section hidden">
@@ -1099,7 +1068,9 @@ button.btn:not(:disabled):hover{filter:saturate(1.12);box-shadow:0 7px 15px rgba
           <div class="field full-row">
             <label>FOTO KERUSAKAN <span id="swPhotoMark" style="visibility:hidden">*</span></label>
             <div class="filebox">
-              <input id="swPhoto" type="file" accept="image/*" onchange="previewFile(this,'swPhotoPreview')">
+              <input id="swPhoto" type="file" accept="image/*" class="file-picker-input" onchange="previewFile(this,'swPhotoPreview')">
+              <input id="swPhotoCamera" type="file" accept="image/*" capture="environment" class="camera-input" onchange="useCameraPhoto(this,'swPhoto','swPhotoPreview')">
+              <div class="photo-actions"><label class="btn btn-light" for="swPhoto">📁 Pilih File</label><label class="btn btn-primary" for="swPhotoCamera">📷 Buka Kamera</label></div>
               <div id="swPhotoPreview" class="preview"></div>
             </div>
             <div class="small" id="swPhotoHelp">Wajib untuk Replacement - Rusak / Pecah.</div>
@@ -1958,6 +1929,7 @@ async function saveSales(){
 }
 
 function resetSales(){
+  if($('salesStore')) $('salesStore').value='';
   ['salesDineIn','tcDineIn','salesDelivery','tcDelivery','salesTakeAway','tcTakeAway','salesConnect','tcConnect','salesTips','salesNote'].forEach(id=>$(id).value='');
   updateSalesTotals();
 }
@@ -2001,9 +1973,10 @@ async function saveWaste(){
 }
 
 function resetWaste(){
+  if($('wasteStore')) $('wasteStore').value='';
   ['wasteCategory','wasteItemId','wasteItemName','wasteUnit','wasteQty','wasteReason','wasteNote'].forEach(id=>$(id).value='');
-  $('wastePhoto').value='';
-  $('wastePreview').innerHTML='';
+  if($('wastePhoto')) $('wastePhoto').value='';
+  if($('wastePreview')) $('wastePreview').innerHTML='';
 }
 
 /* MAINTENANCE */
@@ -2024,7 +1997,7 @@ async function saveMaintenance(){
 
   try{
     showLoading(true);
-    const file=$('mtBefore').files[0];
+    const file=selectedPhotoFile('mtBefore');
 
     const payload={
       action:'saveMaintenance',
@@ -2113,7 +2086,8 @@ async function searchMaintenance(){
 
 function clearMaintenanceForm(){
   ['mtNoSC','mtAsset','mtDamage','mtVendor','mtNote'].forEach(id=>$(id).value='');
-  $('mtBefore').value='';
+  $('mtStore').value=''; $('mtCategory').selectedIndex=0; $('mtPriority').value='MEDIUM';
+  $('mtBefore').value=''; $('mtBeforeCamera').value=''; $('mtBefore').__cameraFile=null;
   $('mtBeforePreview').innerHTML='';
   $('mtInputDate').value=todayISO();
   $('mtIncidentDate').value=todayISO();
@@ -2128,7 +2102,7 @@ async function saveKPI(){
     return;
   }
 
-  const file=$('kpiPhoto').files[0];
+  const file=selectedPhotoFile('kpiPhoto');
   if(!file){
     toast('Foto KPI wajib dipilih.');
     return;
@@ -2150,7 +2124,9 @@ async function saveKPI(){
 
     const r=await apiPost(payload);
     toast('KPI berhasil diupload ke Google Drive.');
-    $('kpiPhoto').value='';
+    $('kpiStore').value='';
+    $('kpiMonth').selectedIndex=0;
+    $('kpiPhoto').value=''; $('kpiPhotoCamera').value=''; $('kpiPhoto').__cameraFile=null;
     $('kpiPreview').innerHTML='';
     $('kpiNote').value='';
     await loadKPIHistory();
@@ -2163,6 +2139,23 @@ async function saveKPI(){
 function num(id){
   return Number($(id).value||0)||0;
 }
+
+
+function useCameraPhoto(cameraInput,targetInputId,previewId){
+  const file=cameraInput && cameraInput.files && cameraInput.files[0];
+  const target=document.getElementById(targetInputId);
+  if(!file||!target)return;
+  try{
+    const transfer=new DataTransfer();transfer.items.add(file);target.files=transfer.files;
+    previewFile(target,previewId);
+  }catch(err){
+    // Fallback: preview camera image and expose a direct file reference for payload builders.
+    target.__cameraFile=file;
+    const preview=document.getElementById(previewId);
+    if(preview){preview.innerHTML='';const img=document.createElement('img');img.src=URL.createObjectURL(file);preview.appendChild(img);}
+  }
+}
+function selectedPhotoFile(id){const el=document.getElementById(id);return el?.__cameraFile||el?.files?.[0]||null;}
 
 function previewFile(input,targetId){
   const file=input.files[0];
@@ -2226,10 +2219,10 @@ function initWalkthrough(){
   }
 
   $('walkthroughAccessNote').textContent =
-    'Semua akun Store dapat melihat seluruh history Walkthrough. Data input tetap berasal dari website Walkthrough GitHub.';
+    'Data bersumber dari website WT AM terpisah. Control Store hanya menampilkan hasil; input dan tindak lanjut tidak dilakukan di sini.';
 
   $('walkthroughHeroSub').textContent =
-    'Seluruh history Walkthrough dari semua store — VIEW ONLY.';
+    'Hasil walkthrough AM dari website WT AM terpisah — hanya untuk dilihat di Control Store.';
 
   loadWalkthrough();
 }
@@ -2884,7 +2877,7 @@ async function saveSmallwareRequestUI(){
   const name = $('swName').value.trim();
   const qty = Number($('swQty').value||0);
   const type = $('swType').value;
-  const file = $('swPhoto').files[0];
+  const file = selectedPhotoFile('swPhoto');
 
   if(!name){
     toast('Nama Smallware wajib diisi.');
@@ -3024,10 +3017,11 @@ async function updateSmallwareStatusUI(id,status){
 
 function resetSmallwareForm(){
   $('swDate').value=todayISO();
+  if($('swStore')) $('swStore').value='';
   $('swName').value='';
   $('swQty').value='';
   $('swType').value='';
-  $('swPhoto').value='';
+  $('swPhoto').value=''; if($('swPhotoCamera')) $('swPhotoCamera').value=''; $('swPhoto').__cameraFile=null;
   $('swPhotoPreview').innerHTML='';
   $('swNote').value='';
   toggleSmallwarePhoto();
@@ -3085,16 +3079,17 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 
-/* V19 K-POP/KOREAN wallpaper: changes once per calendar day, consistent for visitors in the same local date. */
+/* V20 BTS WALLPAPER: foto grup BTS asli; berganti otomatis setiap tanggal lokal. */
 (function initScenicBackground(){
-  // K-pop-inspired concert lights, city-night and Seoul-style neon mood; no idol likenesses required.
+  // Foto BTS dari Wikimedia Commons; foto acara White House oleh fotografer resmi White House (public domain AS).
+  // Gunakan Special:FilePath agar Wikimedia melayani file gambar langsung.
   const koreanPopPhotos = [
-    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=2200&q=85',
-    'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2200&q=85'
+    'https://commons.wikimedia.org/wiki/Special:FilePath/BTS_at_the_White_House_on_May_31,_2022.jpg?width=2200',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/BTS_at_the_White_House_on_May_31,_2022_02.jpg?width=2200',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/BTS_at_the_White_House_on_May_31,_2022_03.jpg?width=2200',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/BTS_at_the_White_House_on_May_31,_2022_05.jpg?width=2200',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/President_Joe_Biden_and_BTS_in_the_Oval_Office_of_the_White_House,_May_31,_2022.jpg?width=2200',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/President_Joe_Biden_and_BTS_in_the_Oval_Office_of_the_White_House,_May_31,_2022_02.jpg?width=2200'
   ];
   const applyScenic = () => {
     const now = new Date();
@@ -3135,9 +3130,8 @@ const __moduleSpecs = {
   kpi:{title:'📊 KPI Store',subtitle:'Kelola upload KPI dan periksa riwayat setiap store.',items:[
     {key:'input',icon:'📤',title:'Input KPI',desc:'Upload foto dashboard KPI store.',tone:'purple'},
     {key:'history',icon:'📋',title:'History KPI',desc:'Riwayat upload KPI semua store.',tone:'blue'}]},
-  walkthrough:{title:'📝 Walkthrough',subtitle:'Buka temuan dan tindak lanjut walkthrough.',items:[
-    {key:'history',icon:'📋',title:'History Temuan',desc:'Cari dan lihat temuan berdasarkan store.',tone:'cyan'},
-    {key:'followup',icon:'✅',title:'Detail / Follow Up Temuan',desc:'Pilih temuan untuk melihat detail dan tindak lanjut.',tone:'green'}]},
+  walkthrough:{title:'📋 Hasil Walkthrough AM',subtitle:'Lihat hasil walkthrough yang diinput dari website WT AM terpisah.',items:[
+    {key:'history',icon:'📋',title:'Lihat Hasil Walkthrough AM',desc:'Cari dan lihat hasil walkthrough berdasarkan store.',tone:'cyan'}]},
   soldout:{title:'🚫 Rekap Sold Out',subtitle:'Lihat rekap item Sold Out berdasarkan store dan periode.',items:[{key:'history',icon:'📋',title:'Rekap Sold Out',desc:'Ringkasan dan prioritas item Sold Out.',tone:'orange'}]},
   smallware:{title:'🍴 Smallware',subtitle:'Pilih request baru, history request, atau frequency.',items:[
     {key:'request',icon:'➕',title:'Request Baru',desc:'Buat permintaan Smallware.',tone:'green'},
@@ -3175,7 +3169,7 @@ function __setupModulePanels(){
     waste:{panels:{dashboard:()=>[],history:()=>[__findCardByChild('wasteHistoryBody')]}},
     maintenance:{panels:{input:()=>[__findCardByChild('mtNoSC')],search:()=>[__findCardByChild('searchSC')],history:()=>[__findCardByChild('maintenanceHistoryBody')]}},
     kpi:{panels:{input:()=>[__findCardByChild('kpiStore')],history:()=>[__findCardByChild('kpiHistoryBody')]}},
-    walkthrough:{panels:{history:()=>[],followup:()=>[]}},
+    walkthrough:{panels:{history:()=>[]}},
     smallware:{panels:{request:()=>[__el('swPanelRequest')],history:()=>[__el('swPanelHistory')],frequency:()=>[__el('swPanelFrequency')]}}
   };
   Object.keys(configs).forEach(module=>{
@@ -3190,16 +3184,9 @@ function __setupModulePanels(){
       if(history){const hp=__newPanel('module-waste-history-panel');hp.appendChild(history);section.appendChild(hp);section._modulePanels.history=hp;}
       section.appendChild(dash);section._modulePanels.dashboard=dash;
     }else if(module==='walkthrough'){
-      const detail=__el('walkthroughDetail');
       const main=__newPanel('module-walkthrough-history-panel');
-      Array.from(section.children).filter(n=>n!==section._moduleHero&&n!==section._moduleLanding&&n!==section._moduleBack&&n!==detail).forEach(n=>main.appendChild(n));
-      if(detail&&detail.parentElement!==section){};
+      Array.from(section.children).filter(n=>n!==section._moduleHero&&n!==section._moduleLanding&&n!==section._moduleBack).forEach(n=>main.appendChild(n));
       section.appendChild(main);section._modulePanels.history=main;
-      // Follow-up reuses the temuan list and detail card so selecting a temuan still works.
-      const follow=__newPanel('module-walkthrough-followup-panel');
-      const note=document.createElement('div');note.className='store-only-note';note.textContent='Pilih temuan dari daftar untuk membuka detail dan tindak lanjut.';follow.appendChild(note);
-      if(detail)follow.appendChild(detail);
-      section.appendChild(follow);section._modulePanels.followup=follow;
     }else{
       Object.keys(spec.panels).forEach(key=>{
         const panel=__newPanel('module-'+module+'-'+key+'-panel');
@@ -3287,7 +3274,6 @@ async function openModuleView(module,view){
         if(view==='history')await loadKPIHistory();
       }else if(module==='walkthrough'){
         if(view==='history')await initWalkthrough();
-        if(view==='followup')await initWalkthrough();
       }else if(module==='soldout'){
         if(view==='history')await loadSoldOutSummary();
       }else if(module==='smallware'){
